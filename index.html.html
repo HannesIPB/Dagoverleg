@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dagoverlegbord — Direct Reports</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff; --bg2: #f5f5f3; --bg3: #eeede8;
+  --text: #1a1a18; --text2: #5f5e5a; --text3: #888780;
+  --border: rgba(0,0,0,0.12); --border2: rgba(0,0,0,0.22);
+  --radius: 8px; --radius-lg: 12px;
+  --ok: #1D9E75; --nok: #D85A30; --warn: #BA7517;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#1c1c1a; --bg2:#252523; --bg3:#2e2e2b; --text:#f0efe8; --text2:#b4b2a9; --text3:#888780; --border:rgba(255,255,255,0.12); --border2:rgba(255,255,255,0.22); }
+}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg3); color: var(--text); min-height: 100vh; }
+.page { max-width: 920px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+.header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem; }
+.header h1 { font-size: 20px; font-weight: 500; }
+.header-sub { font-size: 12px; color: var(--text2); margin-top: 3px; }
+.nav { display: flex; gap: 6px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.nav-btn { padding: 7px 14px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: transparent; color: var(--text2); font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.15s; }
+.nav-btn.active { background: var(--bg); color: var(--text); font-weight: 500; }
+.nav-btn:hover:not(.active) { background: var(--bg2); }
+.section { display: none; }
+.section.active { display: block; }
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+.metric { background: var(--bg2); border-radius: var(--radius); padding: 14px 16px; }
+.metric-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.metric-value { font-size: 22px; font-weight: 500; }
+.metric-sub { font-size: 11px; margin-top: 4px; }
+.ok { color: var(--ok); } .nok { color: var(--nok); } .warn { color: var(--warn); }
+.card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 10px; }
+.card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+.card-title { font-size: 14px; font-weight: 500; line-height: 1.4; }
+.card-meta { font-size: 11px; color: var(--text3); text-align: right; white-space: nowrap; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: var(--radius); font-size: 11px; font-weight: 500; }
+.badge-open { background: #FCEBEB; color: #A32D2D; }
+.badge-done { background: #EAF3DE; color: #3B6D11; }
+.badge-lopend { background: #FAEEDA; color: #854F0B; }
+.badge-krit { background: #FCEBEB; color: #A32D2D; }
+.badge-nkrit { background: #F1EFE8; color: #5F5E5A; }
+.tags-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 5px; }
+.dept-tag { display: inline-block; padding: 1px 7px; border-radius: 20px; font-size: 11px; background: var(--bg2); color: var(--text2); }
+.row-detail { font-size: 12px; color: var(--text2); margin-top: 5px; display: flex; gap: 5px; line-height: 1.5; }
+.filter-bar { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+.filter-bar label { font-size: 12px; color: var(--text2); }
+.filter-bar select { padding: 5px 10px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); font-size: 13px; cursor: pointer; }
+.chart-wrap { position: relative; width: 100%; height: 260px; margin-bottom: 1.5rem; }
+.chart-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+.chart-tab { padding: 4px 12px; border: 0.5px solid var(--border2); border-radius: 20px; font-size: 12px; cursor: pointer; background: transparent; color: var(--text2); transition: all 0.15s; }
+.chart-tab.active { background: var(--bg2); color: var(--text); }
+.legend { display: flex; gap: 14px; margin-bottom: 10px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); }
+.legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.incident-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; margin-top: 5px; }
+.dot-incident { background: #E24B4A; } .dot-onveilig { background: #EF9F27; }
+.note-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.note-item { font-size: 13px; padding: 6px 0; border-bottom: 0.5px solid var(--border); display: flex; gap: 8px; align-items: flex-start; }
+.note-item:last-child { border-bottom: none; }
+.top-actions { display: flex; gap: 8px; margin-bottom: 1rem; align-items: center; flex-wrap: wrap; }
+.btn { padding: 7px 14px; border: 0.5px solid var(--border2); border-radius: var(--radius); background: transparent; color: var(--text2); font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.15s; }
+.btn:hover { background: var(--bg2); }
+.btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+.btn-primary:hover { opacity: 0.85; }
+.btn-danger { color: var(--nok); border-color: var(--nok); }
+.btn-danger:hover { background: #FCEBEB; }
+/* Modal */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; align-items: center; justify-content: center; padding: 1rem; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--bg); border-radius: var(--radius-lg); padding: 1.5rem; width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; border: 0.5px solid var(--border2); }
+.modal-title { font-size: 16px; font-weight: 500; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; }
+.modal-close { background: none; border: none; cursor: pointer; font-size: 20px; color: var(--text3); line-height: 1; padding: 2px 4px; }
+.modal-close:hover { color: var(--text); }
+.form-row { margin-bottom: 14px; }
+.form-label { display: block; font-size: 12px; color: var(--text2); margin-bottom: 5px; font-weight: 500; }
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: 8px 10px; border: 0.5px solid var(--border2);
+  border-radius: var(--radius); background: var(--bg2); color: var(--text);
+  font-size: 13px; font-family: inherit;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { outline: 2px solid #378ADD; outline-offset: -1px; }
+.form-textarea { resize: vertical; min-height: 70px; }
+.form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; padding-top: 1rem; border-top: 0.5px solid var(--border); }
+.empty { color: var(--text3); font-size: 13px; padding: 1rem 0; }
+.delete-btn { background: none; border: none; cursor: pointer; color: var(--text3); font-size: 14px; padding: 2px 4px; border-radius: 4px; line-height: 1; }
+.delete-btn:hover { color: var(--nok); background: #FCEBEB; }
+.card-actions { display: flex; gap: 4px; margin-left: 8px; }
+@media print {
+  .nav, .filter-bar, .chart-tabs, .btn, .top-actions, .card-actions, .modal-overlay { display: none !important; }
+  .section { display: block !important; }
+  .page { max-width: 100%; padding: 0; }
+  body { background: white; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div>
+      <h1>Dagoverlegbord — Direct Reports</h1>
+      <div class="header-sub">Aanwezig: DOP · PDB · YAL · HBR</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <span style="font-size:12px;color:var(--text3);" id="datum-display"></span>
+      <button class="btn" onclick="window.print()"><i class="ti ti-printer"></i> Afdrukken</button>
+      <button class="btn" onclick="exportData()"><i class="ti ti-download"></i> Export</button>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="switchTab('kpi',this)"><i class="ti ti-chart-bar"></i> KPI's</button>
+    <button class="nav-btn" onclick="switchTab('tech',this)"><i class="ti ti-tool"></i> Technische dienst</button>
+    <button class="nav-btn" onclick="switchTab('ops',this)"><i class="ti ti-alert-triangle"></i> Operationele problemen</button>
+    <button class="nav-btn" onclick="switchTab('acties',this)"><i class="ti ti-checkbox"></i> Acties &amp; beslissingen</button>
+    <button class="nav-btn" onclick="switchTab('veiligheid',this)"><i class="ti ti-shield"></i> Veiligheid</button>
+  </div>
+
+  <!-- KPI TAB -->
+  <div class="section active" id="tab-kpi">
+    <div class="top-actions">
+      <button class="btn btn-primary" onclick="openModal('kpi')"><i class="ti ti-plus"></i> KPI-regel invoegen</button>
+    </div>
+    <div class="metric-grid" id="kpi-metrics">
+      <div class="metric"><div class="metric-label">P1 output (3d)</div><div class="metric-value" id="m-p1-out">—</div><div class="metric-sub" id="m-p1-vs"></div></div>
+      <div class="metric"><div class="metric-label">P4 output (3d)</div><div class="metric-value" id="m-p4-out">—</div><div class="metric-sub" id="m-p4-vs"></div></div>
+      <div class="metric"><div class="metric-label">Converting (3d)</div><div class="metric-value" id="m-cv-out">—</div><div class="metric-sub" id="m-cv-vs"></div></div>
+      <div class="metric"><div class="metric-label">H/ton P1</div><div class="metric-value" id="m-p1-h">—</div><div class="metric-sub" id="m-p1-hd"></div></div>
+      <div class="metric"><div class="metric-label">H/ton P4</div><div class="metric-value" id="m-p4-h">—</div><div class="metric-sub" id="m-p4-hd"></div></div>
+      <div class="metric"><div class="metric-label">H/ton Converting</div><div class="metric-value" id="m-cv-h">—</div><div class="metric-sub" id="m-cv-hd"></div></div>
+    </div>
+    <div class="chart-tabs">
+      <button class="chart-tab active" onclick="switchChart('output',this)">Output</button>
+      <button class="chart-tab" onclick="switchChart('hton',this)">H/ton trend</button>
+    </div>
+    <div class="legend" id="legend-output">
+      <span class="legend-item"><span class="legend-dot" style="background:#378ADD;"></span>P1</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#1D9E75;"></span>P4</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#EF9F27;"></span>Converting</span>
+    </div>
+    <div class="legend" id="legend-hton" style="display:none;">
+      <span class="legend-item"><span class="legend-dot" style="background:#378ADD;"></span>P1 h/ton</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#1D9E75;"></span>P4 h/ton</span>
+      <span class="legend-item"><span class="legend-dot" style="background:#EF9F27;"></span>Conv h/ton</span>
+    </div>
+    <div class="chart-wrap"><canvas id="kpiChart" role="img" aria-label="KPI grafiek per afdeling"></canvas></div>
+    <div style="font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Ingevoerde KPI-regels</div>
+    <div id="kpi-list"></div>
+  </div>
+
+  <!-- TECHNISCHE DIENST TAB -->
+  <div class="section" id="tab-tech">
+    <div class="top-actions">
+      <button class="btn btn-primary" onclick="openModal('tech')"><i class="ti ti-plus"></i> Storing toevoegen</button>
+      <div class="filter-bar" style="margin:0;">
+        <select id="tech-sf" onchange="renderTech()"><option value="all">Alle statussen</option><option value="open">Open</option><option value="lopend">Lopend</option><option value="afgewerkt">Afgewerkt</option></select>
+        <select id="tech-df" onchange="renderTech()"><option value="all">Alle afdelingen</option><option value="P1">P1</option><option value="P4">P4</option><option value="Converting">Converting</option></select>
+        <select id="tech-kf" onchange="renderTech()"><option value="all">Alle prioriteit</option><option value="ja">Kritisch</option><option value="neen">Niet kritisch</option></select>
+      </div>
+    </div>
+    <div class="metric-grid" id="tech-metrics"></div>
+    <div id="tech-list"></div>
+  </div>
+
+  <!-- OPERATIONELE PROBLEMEN TAB -->
+  <div class="section" id="tab-ops">
+    <div class="top-actions">
+      <button class="btn btn-primary" onclick="openModal('ops')"><i class="ti ti-plus"></i> Probleem toevoegen</button>
+      <div class="filter-bar" style="margin:0;">
+        <select id="ops-sf" onchange="renderOps()"><option value="all">Alle statussen</option><option value="open">Open</option><option value="lopend">Lopend</option><option value="afgewerkt">Afgewerkt</option></select>
+        <select id="ops-df" onchange="renderOps()"><option value="all">Alle afdelingen</option><option value="P1">P1</option><option value="P4">P4</option><option value="Converting">Converting</option></select>
+      </div>
+    </div>
+    <div class="metric-grid" id="ops-metrics"></div>
+    <div id="ops-list"></div>
+  </div>
+
+  <!-- ACTIES TAB -->
+  <div class="section" id="tab-acties">
+    <div class="top-actions">
+      <button class="btn btn-primary" onclick="openModal('acties')"><i class="ti ti-plus"></i> Actie toevoegen</button>
+      <div class="filter-bar" style="margin:0;">
+        <select id="acties-sf" onchange="renderActies()"><option value="all">Alle statussen</option><option value="open">Open</option><option value="lopend">Lopend</option><option value="afgewerkt">Afgewerkt</option></select>
+        <select id="acties-df" onchange="renderActies()"><option value="all">Alle afdelingen</option><option value="P1">P1</option><option value="P4">P4</option><option value="Converting">Converting</option><option value="Overal">Overal</option></select>
+      </div>
+    </div>
+    <div class="metric-grid" id="acties-metrics"></div>
+    <div id="acties-list"></div>
+  </div>
+
+  <!-- VEILIGHEID TAB -->
+  <div class="section" id="tab-veiligheid">
+    <div class="top-actions">
+      <button class="btn btn-primary" onclick="openModal('veiligheid')"><i class="ti ti-plus"></i> Melding toevoegen</button>
+    </div>
+    <div class="metric-grid" id="veiligheid-metrics"></div>
+    <div style="font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">Incidenten &amp; onveilige situaties</div>
+    <div id="veiligheid-list"></div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<!-- KPI Modal -->
+<div class="modal-overlay" id="modal-kpi">
+  <div class="modal">
+    <div class="modal-title">KPI-regel invoegen <button class="modal-close" onclick="closeModal('kpi')">&times;</button></div>
+    <div class="form-row"><label class="form-label">Datum</label><input type="date" class="form-input" id="kpi-datum"></div>
+    <div class="form-row-2">
+      <div class="form-row"><label class="form-label">P1 Output (kg)</label><input type="number" class="form-input" id="kpi-p1-out" placeholder="bv. 55000"></div>
+      <div class="form-row"><label class="form-label">P1 H/ton</label><input type="number" step="0.1" class="form-input" id="kpi-p1-h" placeholder="bv. 6.2"></div>
+    </div>
+    <div class="form-row-2">
+      <div class="form-row"><label class="form-label">P4 Output (kg)</label><input type="number" class="form-input" id="kpi-p4-out" placeholder="bv. 10000"></div>
+      <div class="form-row"><label class="form-label">P4 H/ton</label><input type="number" step="0.1" class="form-input" id="kpi-p4-h" placeholder="bv. 8.0"></div>
+    </div>
+    <div class="form-row-2">
+      <div class="form-row"><label class="form-label">Converting Output (kg)</label><input type="number" class="form-input" id="kpi-cv-out" placeholder="bv. 20000"></div>
+      <div class="form-row"><label class="form-label">Converting H/ton</label><input type="number" step="0.1" class="form-input" id="kpi-cv-h" placeholder="bv. 12.0"></div>
+    </div>
+    <div class="form-row"><label class="form-label">Opmerking</label><textarea class="form-textarea" id="kpi-opmerking" placeholder="Optionele opmerking..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('kpi')">Annuleren</button>
+      <button class="btn btn-primary" onclick="saveKpi()"><i class="ti ti-check"></i> Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tech Modal -->
+<div class="modal-overlay" id="modal-tech">
+  <div class="modal">
+    <div class="modal-title">Storing toevoegen <button class="modal-close" onclick="closeModal('tech')">&times;</button></div>
+    <div class="form-row"><label class="form-label">Datum</label><input type="date" class="form-input" id="tech-datum"></div>
+    <div class="form-row"><label class="form-label">Omschrijving storing *</label><input type="text" class="form-input" id="tech-storing" placeholder="Beschrijf de storing..."></div>
+    <div class="form-row-2">
+      <div class="form-row"><label class="form-label">Afdeling</label>
+        <select class="form-select" id="tech-dept"><option>P1</option><option>P4</option><option>Converting</option></select>
+      </div>
+      <div class="form-row"><label class="form-label">Verantwoordelijke</label><input type="text" class="form-input" id="tech-verantw" placeholder="bv. Pascal"></div>
+    </div>
+    <div class="form-row-2">
+      <div class="form-row"><label class="form-label">Kritisch voor productie</label>
+        <select class="form-select" id="tech-krit"><option value="ja">Ja</option><option value="neen">Neen</option></select>
+      </div>
+      <div class="form-row"><label class="form-label">Status</label>
+        <select class="form-select" id="tech-status"><option value="open">Open</option><option value="lopend">Lopend</option><option value="afgewerkt">Afgewerkt</option></select>
+      </div>
+    </div>
+    <div class="form-row"><label class="form-label">Due date oplossing</label><input type="text" class="form-input" id="tech-due" placeholder="bv. ASAP, W22, 01/06/2026"></div>
+    <div class="form-row"><label class="form-label">Opmerking</label><textarea class="form-textarea" id="tech-opmerking" placeholder="Extra toelichting..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('tech')">Annuleren</button>
+      <button class="btn btn-primary" onclick="saveTech()"><i class="ti ti-check"></i> Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Ops Modal -->
+<div class="modal-overlay" id="modal-ops">
+  <div class="modal">
+    <div class="modal-title">Probleem toevoegen <button class="modal-close" onclick="closeModal('ops')">&times;</button></div>
+    <div class="form-row"><label class="form-label">Datum</label><input type="date" class="form-input" id="ops-datum"></div>
+    <div class="form-row"><label class="form-label">Probleem omschrijving *</label><input type="text" class="form-input" id="ops-prob" placeholder="Beschrijf het probleem..."></div>
+    <div class="form-row-2">
+      <div class="form-row"><label class="form-label">Afdeling</label>
+        <select class="form-select" id="ops-dept"><option>P1</option><option>P4</option><option>Converting</option><option>Overal</option></select>
+      </div>
+      <div class="form-row"><label class="form-label">Verantwoordelijke</label><input type="text" class="form-input" id="ops-verantw" placeholder="Naam"></div>
+    </div>
+    <div class="form-row-2">
+      <div class="form-row"><label class="form-label">Status</label>
+        <select class="form-select" id="ops-status"><option value="open">Open</option><option value="lopend">Lopend</option><option value="afgewerkt">Afgewerkt</option></select>
+      </div>
+      <div class="form-row"><label class="form-label">Due date</label><input type="text" class="form-input" id="ops-due" placeholder="bv. ASAP, W22"></div>
+    </div>
+    <div class="form-row"><label class="form-label">Opmerking</label><textarea class="form-textarea" id="ops-opmerking" placeholder="Extra toelichting..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('ops')">Annuleren</button>
+      <button class="btn btn-primary" onclick="saveOps()"><i class="ti ti-check"></i> Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Acties Modal -->
+<div class="modal-overlay" id="modal-acties">
+  <div class="modal">
+    <div class="modal-title">Actie toevoegen <button class="modal-close" onclick="closeModal('acties')">&times;</button></div>
+    <div class="form-row"><label class="form-label">Datum</label><input type="date" class="form-input" id="acties-datum"></div>
+    <div class="form-row"><label class="form-label">Actie omschrijving *</label><input type="text" class="form-input" id="acties-actie" placeholder="Beschrijf de actie..."></div>
+    <div class="form-row-2">
+      <div class="form-row"><label class="form-label">Afdeling</label>
+        <select class="form-select" id="acties-dept"><option>P1</option><option>P4</option><option>Converting</option><option>Overal</option></select>
+      </div>
+      <div class="form-row"><label class="form-label">Verantwoordelijke</label><input type="text" class="form-input" id="acties-verantw" placeholder="Naam / initialen"></div>
+    </div>
+    <div class="form-row-2">
+      <div class="form-row"><label class="form-label">Status</label>
+        <select class="form-select" id="acties-status"><option value="open">Open</option><option value="lopend">Lopend</option><option value="afgewerkt">Afgewerkt</option></select>
+      </div>
+      <div class="form-row"><label class="form-label">Due date</label><input type="text" class="form-input" id="acties-due" placeholder="bv. ASAP, W22, Altijd"></div>
+    </div>
+    <div class="form-row"><label class="form-label">Opmerking</label><textarea class="form-textarea" id="acties-opmerking" placeholder="Extra toelichting..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('acties')">Annuleren</button>
+      <button class="btn btn-primary" onclick="saveActie()"><i class="ti ti-check"></i> Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Veiligheid Modal -->
+<div class="modal-overlay" id="modal-veiligheid">
+  <div class="modal">
+    <div class="modal-title">Veiligheidsmelding toevoegen <button class="modal-close" onclick="closeModal('veiligheid')">&times;</button></div>
+    <div class="form-row"><label class="form-label">Datum</label><input type="date" class="form-input" id="v-datum"></div>
+    <div class="form-row"><label class="form-label">Type melding</label>
+      <select class="form-select" id="v-type"><option value="incident">Incident</option><option value="onveilig">Onveilige situatie</option><option value="actie">Open veiligheidsactie</option></select>
+    </div>
+    <div class="form-row"><label class="form-label">Omschrijving *</label><input type="text" class="form-input" id="v-omschrijving" placeholder="Beschrijf het incident of de situatie..."></div>
+    <div class="form-row-2">
+      <div class="form-row"><label class="form-label">Betrokken persoon</label><input type="text" class="form-input" id="v-persoon" placeholder="Naam (optioneel)"></div>
+      <div class="form-row"><label class="form-label">Afdeling / locatie</label><input type="text" class="form-input" id="v-locatie" placeholder="bv. P1, Lijn 18"></div>
+    </div>
+    <div class="form-row"><label class="form-label">Status</label>
+      <select class="form-select" id="v-status"><option value="open">Open</option><option value="afgewerkt">Afgewerkt</option></select>
+    </div>
+    <div class="form-row"><label class="form-label">Opmerking / maatregel</label><textarea class="form-textarea" id="v-opmerking" placeholder="Wat werd gedaan of wat moet er nog gebeuren?"></textarea></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('veiligheid')">Annuleren</button>
+      <button class="btn btn-primary" onclick="saveVeiligheid()"><i class="ti ti-check"></i> Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ── Helpers ──────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const today = () => new Date().toISOString().slice(0,10);
+const fmtDate = s => { if(!s) return ''; try { const d=new Date(s+'T00:00'); return d.toLocaleDateString('nl-BE',{day:'2-digit',month:'2-digit',year:'numeric'}); } catch(e){ return s; } };
+function statusBadge(s) {
+  const sl=(s||'').toLowerCase().trim();
+  if(sl==='open') return '<span class="badge badge-open">Open</span>';
+  if(sl==='lopend') return '<span class="badge badge-lopend">Lopend</span>';
+  return '<span class="badge badge-done">Afgewerkt</span>';
+}
+function kritBadge(k) {
+  if((k||'').toLowerCase()==='ja') return '<span class="badge badge-krit"><i class="ti ti-bolt" style="font-size:11px;"></i> Kritisch</span>';
+  return '<span class="badge badge-nkrit">Niet kritisch</span>';
+}
+function calcMetrics(arr, statusKey) {
+  const total=arr.length, open=arr.filter(d=>(d[statusKey]||'').toLowerCase()==='open').length,
+    lopend=arr.filter(d=>(d[statusKey]||'').toLowerCase()==='lopend').length,
+    afgewerkt=arr.filter(d=>(d[statusKey]||'').toLowerCase()==='afgewerkt').length;
+  return {total,open,lopend,afgewerkt};
+}
+function renderMetrics(elId, m) {
+  $(elId).innerHTML=`
+    <div class="metric"><div class="metric-label">Totaal</div><div class="metric-value">${m.total}</div></div>
+    <div class="metric"><div class="metric-label">Open</div><div class="metric-value nok">${m.open}</div><div class="metric-sub nok">${m.open?'Actie vereist':''}</div></div>
+    <div class="metric"><div class="metric-label">Lopend</div><div class="metric-value warn">${m.lopend}</div></div>
+    <div class="metric"><div class="metric-label">Afgewerkt</div><div class="metric-value ok">${m.afgewerkt}</div></div>`;
+}
+
+// ── Storage ───────────────────────────────────────────────────────────────
+function load(key, def) { try { return JSON.parse(localStorage.getItem(key)) || def; } catch(e){ return def; } }
+function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch(e){} }
+
+// ── Data ──────────────────────────────────────────────────────────────────
+let kpiData = load('db_kpi', [
+  {id:1,datum:'2026-05-19',p1Out:24149,p1H:9.3,p4Out:11151,p4H:9.0,cvOut:19491,cvH:15.4,opmerking:'Plan niet doorgekomen dit weekend bij converting'},
+  {id:2,datum:'2026-05-14',p1Out:67282,p1H:5.5,p4Out:0,p4H:0,cvOut:11830,cvH:17,opmerking:''},
+  {id:3,datum:'2026-05-12',p1Out:53812,p1H:5.4,p4Out:0,p4H:0,cvOut:16278,cvH:14,opmerking:''},
+  {id:4,datum:'2026-05-09',p1Out:67282,p1H:5.5,p4Out:0,p4H:0,cvOut:11830,cvH:17,opmerking:''},
+  {id:5,datum:'2026-04-29',p1Out:50292,p1H:7.2,p4Out:2121,p4H:5.7,cvOut:28023,cvH:13,opmerking:''},
+  {id:6,datum:'2026-04-28',p1Out:41836,p1H:8.2,p4Out:3455,p4H:6.9,cvOut:25486,cvH:14,opmerking:''},
+  {id:7,datum:'2026-04-25',p1Out:42462,p1H:7.5,p4Out:6479,p4H:7.4,cvOut:30804,cvH:10,opmerking:''},
+  {id:8,datum:'2026-04-24',p1Out:39671,p1H:7.5,p4Out:6103,p4H:9.8,cvOut:26712,cvH:10,opmerking:''},
+  {id:9,datum:'2026-04-22',p1Out:42105,p1H:6.8,p4Out:13964,p4H:6.3,cvOut:31912,cvH:8,opmerking:''},
+  {id:10,datum:'2026-04-17',p1Out:87286,p1H:6.3,p4Out:0,p4H:0,cvOut:25167,cvH:10,opmerking:''},
+]);
+
+let techData = load('db_tech', [
+  {id:1,datum:'2026-05-19',storing:'Olie vervangen op Iijima',dept:'Converting',verantw:'Pascal',kritisch:'neen',status:'open',due:'ASAP',opmerking:''},
+  {id:2,datum:'2026-05-18',storing:'Tandwiel L42 trekrolen',dept:'P4',verantw:'Pascal',kritisch:'ja',status:'lopend',due:'19/05',opmerking:'Tandwiel bij Lefebre besteld'},
+  {id:3,datum:'2026-05-18',storing:'Weerstanden munchy breken',dept:'P1',verantw:'Pascal',kritisch:'neen',status:'lopend',due:'ASAP',opmerking:''},
+  {id:4,datum:'2026-05-18',storing:'Colli machine laten reviseren',dept:'Converting',verantw:'Pascal',kritisch:'neen',status:'open',due:'ASAP',opmerking:'Revisie nodig, verschillende hekele punten'},
+  {id:5,datum:'2026-05-19',storing:'Controle bronzen bussen Cauhe',dept:'Converting',verantw:'Pascal',kritisch:'neen',status:'open',due:'W22',opmerking:'Preventieve check smering'},
+  {id:6,datum:'2026-04-14',storing:'Lamp BSP vervangen (uitvoer)',dept:'Converting',verantw:'Pascal',kritisch:'neen',status:'open',due:'W18',opmerking:''},
+  {id:7,datum:'2026-04-06',storing:'Haspel perslucht voorzien bij munchy',dept:'P1',verantw:'Pascal',kritisch:'neen',status:'open',due:'',opmerking:'5S'},
+  {id:8,datum:'2026-05-17',storing:'Lijima groot onderhoud aan stapelaar',dept:'Converting',verantw:'Pascal',kritisch:'ja',status:'open',due:'ZSM',opmerking:'Groen komt 1 en 2 Juni voor wisselstukken'},
+  {id:9,datum:'2026-03-06',storing:'Filterblok L12 (brok polyprop)',dept:'P1',verantw:'',kritisch:'neen',status:'open',due:'Verlof 2026',opmerking:'Binnendoen tijdens verlof — voorleggen aan YL'},
+  {id:10,datum:'2026-03-14',storing:'Noodstop L18 herstellen',dept:'P1',verantw:'Pascal',kritisch:'neen',status:'afgewerkt',due:'W18',opmerking:'Wss door kapotte sturing in het verleden overbrugd'},
+  {id:11,datum:'2026-03-18',storing:'Vacuumpomp kapot en uitgevallen',dept:'P1',verantw:'Pascal',kritisch:'ja',status:'afgewerkt',due:'ASAP',opmerking:'Dringend nieuwe pomp en opnieuw opstarten'},
+  {id:12,datum:'2026-02-17',storing:'Sturing BSP herstellen bij ABC',dept:'Converting',verantw:'Pascal',kritisch:'ja',status:'afgewerkt',due:'ASAP',opmerking:'Opstarten 27/04 — levering zonder klantimpact'},
+]);
+
+let opsData = load('db_ops', [
+  {id:1,datum:'2026-01-23',prob:'Voorraad kleurstoffen in vraag stellen',dept:'P1/P4',verantw:'Hannes',status:'open',due:'',opmerking:'Voorraad verhogen voor langere runs'},
+  {id:2,datum:'2026-02-25',prob:"Foto's ploegbord opslaan op centrale map",dept:'P1',verantw:'Dieter',status:'open',due:'14/03',opmerking:'Opstart 12/03'},
+  {id:3,datum:'2026-03-06',prob:'Scrapbakken extruder — hoog niveau melder voorzien',dept:'P1',verantw:'Pascal',status:'open',due:'',opmerking:'Stilstand breker door verstopte leidingen voorkomen'},
+  {id:4,datum:'2026-02-13',prob:'Opstarten ploegbord in converting',dept:'Converting',verantw:'Yauheni',status:'lopend',due:'W12',opmerking:'Idem systeem als P1'},
+  {id:5,datum:'2026-02-17',prob:'Systeem om wit en zwart te scheiden in scrapbakken',dept:'P1',verantw:'Yauheni',status:'afgewerkt',due:'ASAP',opmerking:'Problemen bij de munchy'},
+  {id:6,datum:'2026-02-10',prob:'Messen breker korrels munchy vervangen',dept:'P1',verantw:'Pascal',status:'afgewerkt',due:'ASAP',opmerking:''},
+  {id:7,datum:'2026-03-24',prob:'Lijn 15 onderste trekrol herrubberen',dept:'P1',verantw:'Hannes',status:'afgewerkt',due:'W10',opmerking:''},
+  {id:8,datum:'2026-01-20',prob:'Geen licentie SwissQ — bleek netwerk issue, opgelost',dept:'Converting',verantw:'Yauheni',status:'afgewerkt',due:'',opmerking:''},
+]);
+
+let actiesData = load('db_acties', [
+  {id:1,datum:'2026-01-31',actie:'Opleidingen heftruck inplannen',dept:'Overal',verantw:'YAL / DOP',due:'W18',status:'lopend',opmerking:'Weekenders afgewerkt'},
+  {id:2,datum:'2026-01-31',actie:'Opleiding rolbrug door interne medewerker',dept:'P4',verantw:'HBR / PDB',due:'W18',status:'lopend',opmerking:'Bjorn volgt opleiding en geeft intern door'},
+  {id:3,datum:'2026-02-25',actie:'Tesfaldet + Michael opleiden CUIR',dept:'',verantw:'YAL / HBR',due:'',status:'lopend',opmerking:'Extra drukker die ook wil stansen aannemen'},
+  {id:4,datum:'2026-03-06',actie:'BOM juist zetten met werkelijkheid',dept:'P1',verantw:'HBR/YAL',due:'Altijd',status:'open',opmerking:'BOM moet kloppen met realiteit'},
+  {id:5,datum:'2026-03-06',actie:'Algemene netheid werkpost',dept:'Overal',verantw:'Allen',due:'Altijd',status:'lopend',opmerking:'Checklijst operatoren popup op FS bekijken'},
+  {id:6,datum:'2026-01-20',actie:'Nieuwe modules microperforatie',dept:'P1',verantw:'HBR / PDB',due:'',status:'afgewerkt',opmerking:''},
+  {id:7,datum:'2026-01-31',actie:'Rotatiesysteem P1 implementeren',dept:'P1',verantw:'DOP/HBR',due:'',status:'afgewerkt',opmerking:'Wekelijks elke operator roteren van lijnen'},
+  {id:8,datum:'2026-03-17',actie:'Platen veiligheid ophangen met hoogtewerker',dept:'Converting',verantw:'TD',due:'18/03',status:'afgewerkt',opmerking:''},
+]);
+
+let veiligheidData = load('db_veiligheid', [
+  {id:1,datum:'2026-03-14',type:'incident',omschrijving:'Blazej — snijwonde aan de rakelmessen',persoon:'Blazej',locatie:'P1',status:'afgewerkt',opmerking:''},
+  {id:2,datum:'2026-03-07',type:'onveilig',omschrijving:'Noodstop lijn 18 overbrugd !!!',persoon:'',locatie:'P1',status:'open',opmerking:'Controleren en herstellen'},
+  {id:3,datum:'2026-03-06',type:'onveilig',omschrijving:'Ladders worden voortdurend beschadigd !!!',persoon:'',locatie:'Overal',status:'open',opmerking:''},
+  {id:4,datum:'2026-02-21',type:'incident',omschrijving:'Tony — snijwonde (handschoenen niet aan!!!)',persoon:'Tony',locatie:'',status:'afgewerkt',opmerking:''},
+  {id:5,datum:'2026-02-20',type:'incident',omschrijving:'Steven — snijwonde',persoon:'Steven',locatie:'',status:'afgewerkt',opmerking:''},
+  {id:6,datum:'2026-02-13',type:'onveilig',omschrijving:'Octabin bijna aan het vallen — Silviu verplaatst',persoon:'Silviu',locatie:'',status:'afgewerkt',opmerking:''},
+  {id:7,datum:'2026-02-06',type:'incident',omschrijving:'Edwin EHBO — kleine hoofdwonde',persoon:'Edwin',locatie:'',status:'afgewerkt',opmerking:''},
+  {id:8,datum:'2026-01-24',type:'onveilig',omschrijving:'Aeneas gevallen aan nieuwe breker',persoon:'Aeneas',locatie:'P1',status:'open',opmerking:'Veilige oplossing zoeken voor luiken'},
+]);
+
+let nextId = load('db_nextid', 1000);
+
+// ── KPI chart ─────────────────────────────────────────────────────────────
+let kpiChart = null;
+let chartType = 'output';
+
+function buildChart() {
+  if(kpiChart) kpiChart.destroy();
+  const sorted = [...kpiData].sort((a,b)=>a.datum.localeCompare(b.datum)).slice(-20);
+  const labels = sorted.map(d=>fmtDate(d.datum));
+  const isDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+  const gc = isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.07)';
+  const tc = '#888780';
+  let datasets;
+  if(chartType==='output') {
+    datasets=[
+      {label:'P1',data:sorted.map(d=>d.p1Out||null),borderColor:'#378ADD',backgroundColor:'transparent',tension:0.3,pointRadius:3,borderWidth:2},
+      {label:'P4',data:sorted.map(d=>d.p4Out||null),borderColor:'#1D9E75',backgroundColor:'transparent',tension:0.3,pointRadius:3,borderWidth:2},
+      {label:'Conv',data:sorted.map(d=>d.cvOut||null),borderColor:'#EF9F27',backgroundColor:'transparent',tension:0.3,pointRadius:3,borderWidth:2}
+    ];
+  } else {
+    datasets=[
+      {label:'P1',data:sorted.map(d=>d.p1H||null),borderColor:'#378ADD',backgroundColor:'transparent',tension:0.3,pointRadius:3,borderWidth:2},
+      {label:'P4',data:sorted.map(d=>d.p4H||null),borderColor:'#1D9E75',backgroundColor:'transparent',tension:0.3,pointRadius:3,borderWidth:2},
+      {label:'Conv',data:sorted.map(d=>d.cvH||null),borderColor:'#EF9F27',backgroundColor:'transparent',tension:0.3,pointRadius:3,borderWidth:2},
+      {label:'Doel P1',data:Array(sorted.length).fill(6.1),borderColor:'#378ADD',borderDash:[5,5],borderWidth:1,pointRadius:0,backgroundColor:'transparent'},
+      {label:'Doel Conv',data:Array(sorted.length).fill(11),borderColor:'#EF9F27',borderDash:[5,5],borderWidth:1,pointRadius:0,backgroundColor:'transparent'}
+    ];
+  }
+  kpiChart = new Chart($('kpiChart').getContext('2d'),{
+    type:'line',data:{labels,datasets},
+    options:{responsive:true,maintainAspectRatio:false,spanGaps:false,
+      plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false}},
+      scales:{
+        x:{ticks:{font:{size:11},maxRotation:45,autoSkip:true,maxTicksLimit:10,color:tc},grid:{display:false}},
+        y:{ticks:{font:{size:11},color:tc,callback:v=>chartType==='output'?(v/1000).toFixed(0)+'K':v.toFixed(1)},grid:{color:gc}}
+      }}
+  });
+}
+
+function updateKpiMetrics() {
+  const sorted=[...kpiData].sort((a,b)=>b.datum.localeCompare(a.datum));
+  const last=sorted[0];
+  if(!last) return;
+  $('m-p1-out').textContent=last.p1Out?last.p1Out.toLocaleString('nl-BE'):'—';
+  $('m-p4-out').textContent=last.p4Out?last.p4Out.toLocaleString('nl-BE'):'—';
+  $('m-cv-out').textContent=last.cvOut?last.cvOut.toLocaleString('nl-BE'):'—';
+  $('m-p1-h').textContent=last.p1H||'—';
+  $('m-p4-h').textContent=last.p4H||'—';
+  $('m-cv-h').textContent=last.cvH||'—';
+  const setVs=(id,val,doel,lager=true)=>{
+    const el=$(id); if(!val||!doel){el.textContent='';return;}
+    const ok=lager?val<=doel:val>=doel;
+    el.textContent=(ok?'✓ ':'⚠ ')+'Doel: '+doel;
+    el.className='metric-sub '+(ok?'ok':'nok');
+  };
+  setVs('m-p1-hd',last.p1H,6.1,true);
+  setVs('m-p4-hd',last.p4H,10.0,true);
+  setVs('m-cv-hd',last.cvH,11.0,true);
+}
+
+function renderKpiList() {
+  const el=$('kpi-list');
+  const sorted=[...kpiData].sort((a,b)=>b.datum.localeCompare(a.datum));
+  if(!sorted.length){el.innerHTML='<div class="empty">Nog geen KPI-regels ingevoerd.</div>';return;}
+  el.innerHTML=sorted.map(d=>`
+    <div class="card">
+      <div class="card-head">
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:500;">${fmtDate(d.datum)}</div>
+          <div style="margin-top:6px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+            <div style="font-size:12px;color:var(--text2);">P1: <b>${d.p1Out?d.p1Out.toLocaleString('nl-BE'):'—'}</b> kg · ${d.p1H||'—'} h/ton</div>
+            <div style="font-size:12px;color:var(--text2);">P4: <b>${d.p4Out?d.p4Out.toLocaleString('nl-BE'):'—'}</b> kg · ${d.p4H||'—'} h/ton</div>
+            <div style="font-size:12px;color:var(--text2);">Conv: <b>${d.cvOut?d.cvOut.toLocaleString('nl-BE'):'—'}</b> kg · ${d.cvH||'—'} h/ton</div>
+          </div>
+          ${d.opmerking?`<div class="row-detail" style="margin-top:6px;"><i class="ti ti-message-circle" style="font-size:12px;margin-right:4px;" aria-hidden="true"></i>${d.opmerking}</div>`:''}
+        </div>
+        <div class="card-actions"><button class="delete-btn" onclick="deleteItem('kpi',${d.id})" title="Verwijderen"><i class="ti ti-trash"></i></button></div>
+      </div>
+    </div>`).join('');
+}
+
+// ── Tech ──────────────────────────────────────────────────────────────────
+function renderTech() {
+  const sf=($('tech-sf').value).toLowerCase(), df=$('tech-df').value, kf=$('tech-kf').value.toLowerCase();
+  let data=[...techData].sort((a,b)=>b.datum.localeCompare(a.datum)).filter(d=>{
+    if(sf!=='all'&&(d.status||'').toLowerCase()!==sf) return false;
+    if(df!=='all'&&d.dept!==df) return false;
+    if(kf!=='all'&&(d.kritisch||'').toLowerCase()!==kf) return false;
+    return true;
+  });
+  renderMetrics('tech-metrics',calcMetrics(techData,'status'));
+  const el=$('tech-list');
+  if(!data.length){el.innerHTML='<div class="empty">Geen resultaten gevonden.</div>';return;}
+  el.innerHTML=data.map(d=>`
+    <div class="card">
+      <div class="card-head">
+        <div style="flex:1;">
+          <div class="card-title">${d.storing}</div>
+          <div class="tags-row"><span class="dept-tag">${d.dept}</span>${d.verantw?`<span style="font-size:11px;color:var(--text2);">${d.verantw}</span>`:''}${kritBadge(d.kritisch)}</div>
+        </div>
+        <div style="text-align:right;min-width:95px;flex-shrink:0;">
+          ${statusBadge(d.status)}
+          <div class="card-meta" style="margin-top:4px;">${fmtDate(d.datum)}${d.due?' · '+d.due:''}</div>
+          <div class="card-actions" style="justify-content:flex-end;margin-top:4px;"><button class="delete-btn" onclick="deleteItem('tech',${d.id})" title="Verwijderen"><i class="ti ti-trash"></i></button></div>
+        </div>
+      </div>
+      ${d.opmerking?`<div class="row-detail"><i class="ti ti-message-circle" style="font-size:12px;margin-right:4px;" aria-hidden="true"></i>${d.opmerking}</div>`:''}
+    </div>`).join('');
+}
+
+// ── Ops ───────────────────────────────────────────────────────────────────
+function renderOps() {
+  const sf=($('ops-sf').value).toLowerCase(), df=$('ops-df').value;
+  let data=[...opsData].sort((a,b)=>b.datum.localeCompare(a.datum)).filter(d=>{
+    if(sf!=='all'&&(d.status||'').toLowerCase()!==sf) return false;
+    if(df!=='all'&&!d.dept.includes(df)) return false;
+    return true;
+  });
+  renderMetrics('ops-metrics',calcMetrics(opsData,'status'));
+  const el=$('ops-list');
+  if(!data.length){el.innerHTML='<div class="empty">Geen resultaten gevonden.</div>';return;}
+  el.innerHTML=data.map(d=>`
+    <div class="card">
+      <div class="card-head">
+        <div style="flex:1;">
+          <div class="card-title">${d.prob}</div>
+          <div class="tags-row"><span class="dept-tag">${d.dept}</span>${d.verantw?`<span style="font-size:11px;color:var(--text2);">${d.verantw}</span>`:''}
+          </div>
+        </div>
+        <div style="text-align:right;min-width:95px;flex-shrink:0;">
+          ${statusBadge(d.status)}
+          <div class="card-meta" style="margin-top:4px;">${fmtDate(d.datum)}${d.due?' · '+d.due:''}</div>
+          <div class="card-actions" style="justify-content:flex-end;margin-top:4px;"><button class="delete-btn" onclick="deleteItem('ops',${d.id})" title="Verwijderen"><i class="ti ti-trash"></i></button></div>
+        </div>
+      </div>
+      ${d.opmerking?`<div class="row-detail"><i class="ti ti-message-circle" style="font-size:12px;margin-right:4px;" aria-hidden="true"></i>${d.opmerking}</div>`:''}
+    </div>`).join('');
+}
+
+// ── Acties ────────────────────────────────────────────────────────────────
+function renderActies() {
+  const sf=($('acties-sf').value).toLowerCase(), df=$('acties-df').value;
+  let data=[...actiesData].sort((a,b)=>b.datum.localeCompare(a.datum)).filter(d=>{
+    if(sf!=='all'&&(d.status||'').toLowerCase()!==sf) return false;
+    if(df!=='all'&&d.dept!==df) return false;
+    return true;
+  });
+  renderMetrics('acties-metrics',calcMetrics(actiesData,'status'));
+  const el=$('acties-list');
+  if(!data.length){el.innerHTML='<div class="empty">Geen resultaten gevonden.</div>';return;}
+  el.innerHTML=data.map(d=>`
+    <div class="card">
+      <div class="card-head">
+        <div style="flex:1;">
+          <div class="card-title">${d.actie}</div>
+          <div class="tags-row">${d.dept?`<span class="dept-tag">${d.dept}</span>`:''}${d.verantw?`<span style="font-size:11px;color:var(--text2);">${d.verantw}</span>`:''}
+          </div>
+        </div>
+        <div style="text-align:right;min-width:95px;flex-shrink:0;">
+          ${statusBadge(d.status)}
+          <div class="card-meta" style="margin-top:4px;">${fmtDate(d.datum)}${d.due?' · '+d.due:''}</div>
+          <div class="card-actions" style="justify-content:flex-end;margin-top:4px;"><button class="delete-btn" onclick="deleteItem('acties',${d.id})" title="Verwijderen"><i class="ti ti-trash"></i></button></div>
+        </div>
+      </div>
+      ${d.opmerking?`<div class="row-detail"><i class="ti ti-message-circle" style="font-size:12px;margin-right:4px;" aria-hidden="true"></i>${d.opmerking}</div>`:''}
+    </div>`).join('');
+}
+
+// ── Veiligheid ────────────────────────────────────────────────────────────
+function renderVeiligheid() {
+  const m=calcMetrics(veiligheidData,'status');
+  const inc=veiligheidData.filter(d=>d.type==='incident').length;
+  const onv=veiligheidData.filter(d=>d.type==='onveilig').length;
+  $('veiligheid-metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Incidenten</div><div class="metric-value nok">${inc}</div></div>
+    <div class="metric"><div class="metric-label">Onveilige situaties</div><div class="metric-value warn">${onv}</div></div>
+    <div class="metric"><div class="metric-label">Open acties</div><div class="metric-value nok">${m.open}</div></div>
+    <div class="metric"><div class="metric-label">Afgewerkt</div><div class="metric-value ok">${m.afgewerkt}</div></div>`;
+  const el=$('veiligheid-list');
+  const sorted=[...veiligheidData].sort((a,b)=>b.datum.localeCompare(a.datum));
+  if(!sorted.length){el.innerHTML='<div class="empty">Geen meldingen.</div>';return;}
+  el.innerHTML=sorted.map(d=>{
+    const isInc=d.type==='incident';
+    const typeLabel=d.type==='incident'?'Incident':d.type==='onveilig'?'Onveilige situatie':'Open actie';
+    return `<div class="card">
+      <div class="card-head">
+        <div style="display:flex;align-items:flex-start;gap:10px;flex:1;">
+          <span class="incident-dot ${isInc?'dot-incident':'dot-onveilig'}" style="margin-top:5px;"></span>
+          <div>
+            <div class="card-title">${d.omschrijving}</div>
+            <div class="tags-row">
+              <span style="font-size:11px;color:var(--text2);">${typeLabel}</span>
+              ${d.locatie?`<span class="dept-tag">${d.locatie}</span>`:''}
+              ${d.persoon?`<span style="font-size:11px;color:var(--text2);">${d.persoon}</span>`:''}
+            </div>
+            ${d.opmerking?`<div class="row-detail" style="margin-top:4px;"><i class="ti ti-message-circle" style="font-size:12px;margin-right:4px;" aria-hidden="true"></i>${d.opmerking}</div>`:''}
+          </div>
+        </div>
+        <div style="text-align:right;min-width:95px;flex-shrink:0;">
+          ${statusBadge(d.status)}
+          <div class="card-meta" style="margin-top:4px;">${fmtDate(d.datum)}</div>
+          <div class="card-actions" style="justify-content:flex-end;margin-top:4px;"><button class="delete-btn" onclick="deleteItem('veiligheid',${d.id})" title="Verwijderen"><i class="ti ti-trash"></i></button></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Modal helpers ─────────────────────────────────────────────────────────
+function openModal(type) {
+  const el=$('modal-'+type);
+  // set today as default date
+  const dateInput=el.querySelector('input[type=date]');
+  if(dateInput&&!dateInput.value) dateInput.value=today();
+  el.classList.add('open');
+}
+function closeModal(type) { $('modal-'+type).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+// ── Save functions ────────────────────────────────────────────────────────
+function saveKpi() {
+  const datum=$('kpi-datum').value;
+  if(!datum){alert('Gelieve een datum in te vullen.');return;}
+  kpiData.push({id:++nextId,datum,p1Out:+$('kpi-p1-out').value||0,p1H:+$('kpi-p1-h').value||0,p4Out:+$('kpi-p4-out').value||0,p4H:+$('kpi-p4-h').value||0,cvOut:+$('kpi-cv-out').value||0,cvH:+$('kpi-cv-h').value||0,opmerking:$('kpi-opmerking').value});
+  save('db_kpi',kpiData); save('db_nextid',nextId);
+  ['kpi-datum','kpi-p1-out','kpi-p1-h','kpi-p4-out','kpi-p4-h','kpi-cv-out','kpi-cv-h','kpi-opmerking'].forEach(id=>{const el=$(id);if(el)el.value='';});
+  closeModal('kpi'); updateKpiMetrics(); renderKpiList(); buildChart();
+}
+function saveTech() {
+  const storing=$('tech-storing').value.trim();
+  if(!storing){alert('Gelieve een omschrijving in te vullen.');return;}
+  techData.push({id:++nextId,datum:$('tech-datum').value||today(),storing,dept:$('tech-dept').value,verantw:$('tech-verantw').value,kritisch:$('tech-krit').value,status:$('tech-status').value,due:$('tech-due').value,opmerking:$('tech-opmerking').value});
+  save('db_tech',techData); save('db_nextid',nextId);
+  ['tech-storing','tech-verantw','tech-due','tech-opmerking'].forEach(id=>$(id).value='');
+  closeModal('tech'); renderTech();
+}
+function saveOps() {
+  const prob=$('ops-prob').value.trim();
+  if(!prob){alert('Gelieve een omschrijving in te vullen.');return;}
+  opsData.push({id:++nextId,datum:$('ops-datum').value||today(),prob,dept:$('ops-dept').value,verantw:$('ops-verantw').value,status:$('ops-status').value,due:$('ops-due').value,opmerking:$('ops-opmerking').value});
+  save('db_ops',opsData); save('db_nextid',nextId);
+  ['ops-prob','ops-verantw','ops-due','ops-opmerking'].forEach(id=>$(id).value='');
+  closeModal('ops'); renderOps();
+}
+function saveActie() {
+  const actie=$('acties-actie').value.trim();
+  if(!actie){alert('Gelieve een omschrijving in te vullen.');return;}
+  actiesData.push({id:++nextId,datum:$('acties-datum').value||today(),actie,dept:$('acties-dept').value,verantw:$('acties-verantw').value,status:$('acties-status').value,due:$('acties-due').value,opmerking:$('acties-opmerking').value});
+  save('db_acties',actiesData); save('db_nextid',nextId);
+  ['acties-actie','acties-verantw','acties-due','acties-opmerking'].forEach(id=>$(id).value='');
+  closeModal('acties'); renderActies();
+}
+function saveVeiligheid() {
+  const omschrijving=$('v-omschrijving').value.trim();
+  if(!omschrijving){alert('Gelieve een omschrijving in te vullen.');return;}
+  veiligheidData.push({id:++nextId,datum:$('v-datum').value||today(),type:$('v-type').value,omschrijving,persoon:$('v-persoon').value,locatie:$('v-locatie').value,status:$('v-status').value,opmerking:$('v-opmerking').value});
+  save('db_veiligheid',veiligheidData); save('db_nextid',nextId);
+  ['v-omschrijving','v-persoon','v-locatie','v-opmerking'].forEach(id=>$(id).value='');
+  closeModal('veiligheid'); renderVeiligheid();
+}
+
+// ── Delete ────────────────────────────────────────────────────────────────
+function deleteItem(type, id) {
+  if(!confirm('Wilt u dit item verwijderen?')) return;
+  if(type==='kpi'){kpiData=kpiData.filter(d=>d.id!==id);save('db_kpi',kpiData);updateKpiMetrics();renderKpiList();buildChart();}
+  else if(type==='tech'){techData=techData.filter(d=>d.id!==id);save('db_tech',techData);renderTech();}
+  else if(type==='ops'){opsData=opsData.filter(d=>d.id!==id);save('db_ops',opsData);renderOps();}
+  else if(type==='acties'){actiesData=actiesData.filter(d=>d.id!==id);save('db_acties',actiesData);renderActies();}
+  else if(type==='veiligheid'){veiligheidData=veiligheidData.filter(d=>d.id!==id);save('db_veiligheid',veiligheidData);renderVeiligheid();}
+}
+
+// ── Export ────────────────────────────────────────────────────────────────
+function exportData() {
+  const blob=new Blob([JSON.stringify({kpi:kpiData,tech:techData,ops:opsData,acties:actiesData,veiligheid:veiligheidData},null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='dagoverleg_export_'+today()+'.json'; a.click();
+}
+
+// ── Nav / chart switch ────────────────────────────────────────────────────
+function switchTab(id,btn) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  $('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+function switchChart(type,btn) {
+  chartType=type;
+  document.querySelectorAll('.chart-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  $('legend-output').style.display=type==='output'?'flex':'none';
+  $('legend-hton').style.display=type==='hton'?'flex':'none';
+  buildChart();
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+$('datum-display').textContent=new Date().toLocaleDateString('nl-BE',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+updateKpiMetrics();
+renderKpiList();
+renderTech();
+renderOps();
+renderActies();
+renderVeiligheid();
+buildChart();
+</script>
+</body>
+</html>
