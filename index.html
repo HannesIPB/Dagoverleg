@@ -156,7 +156,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <button class="nav-btn" onclick="switchTab('p1',this)">P1</button>
     <button class="nav-btn" onclick="switchTab('p4',this)">P4</button>
     <button class="nav-btn" onclick="switchTab('cv',this)">Converting</button>
-    <button class="nav-btn" onclick="switchTab('tech',this)"><i class="ti ti-tool"></i> Technische dienst</button>
+    <a href="https://maintenance-ipb.web.app/" target="_blank" class="nav-btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;"><i class="ti ti-tool"></i> Technische dienst <i class="ti ti-external-link" style="font-size:11px;opacity:0.7;"></i></a>
     <button class="nav-btn" onclick="switchTab('ops',this)"><i class="ti ti-alert-triangle"></i> Operationele problemen</button>
     <button class="nav-btn" onclick="switchTab('acties',this)"><i class="ti ti-checkbox"></i> Acties</button>
     <button class="nav-btn" onclick="switchTab('veiligheid',this)"><i class="ti ti-shield"></i> Veiligheid</button>
@@ -472,49 +472,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 
-    <div class="kpi-form-section">
-      <div class="kpi-form-section-title" style="color:var(--p1);">P1 — Geplande uren per lijn (max 168u)</div>
-      <div class="form-row-3">
-        <div class="form-row"><label class="form-label">L11 (300 kg/u)</label><input type="number" class="form-input oee-p1-plan" id="oee-p1-l11-plan" placeholder="168" min="0" max="168"></div>
-        <div class="form-row"><label class="form-label">L12 (300 kg/u)</label><input type="number" class="form-input oee-p1-plan" id="oee-p1-l12-plan" placeholder="168" min="0" max="168"></div>
-        <div class="form-row"><label class="form-label">L14 (250 kg/u)</label><input type="number" class="form-input oee-p1-plan" id="oee-p1-l14-plan" placeholder="0" min="0" max="168"></div>
-      </div>
-      <div class="form-row-3">
-        <div class="form-row"><label class="form-label">L15 (250 kg/u)</label><input type="number" class="form-input oee-p1-plan" id="oee-p1-l15-plan" placeholder="168" min="0" max="168"></div>
-        <div class="form-row"><label class="form-label">L16 (275 kg/u)</label><input type="number" class="form-input oee-p1-plan" id="oee-p1-l16-plan" placeholder="168" min="0" max="168"></div>
-        <div class="form-row"><label class="form-label">L17 (350 kg/u)</label><input type="number" class="form-input oee-p1-plan" id="oee-p1-l17-plan" placeholder="0" min="0" max="168"></div>
-      </div>
-      <div class="form-row-2">
-        <div class="form-row"><label class="form-label">L18 (275 kg/u)</label><input type="number" class="form-input oee-p1-plan" id="oee-p1-l18-plan" placeholder="168" min="0" max="168"></div>
-        <div class="form-row"><label class="form-label">Stilstand P1 (u)</label><input type="number" class="form-input" id="oee-p1-stilstand" placeholder="0" min="0"></div>
-      </div>
-    </div>
-
-    <div class="kpi-form-section">
-      <div class="kpi-form-section-title" style="color:var(--p4);">P4 — Geplande uren per lijn (max 120u)</div>
-      <div class="form-row-2">
-        <div class="form-row"><label class="form-label">L41 (175 kg/u)</label><input type="number" class="form-input" id="oee-p4-l41-plan" placeholder="120" min="0" max="120"></div>
-        <div class="form-row"><label class="form-label">L42 (575 kg/u)</label><input type="number" class="form-input" id="oee-p4-l42-plan" placeholder="120" min="0" max="120"></div>
-      </div>
-      <div class="form-row"><label class="form-label">Stilstand P4 (u)</label><input type="number" class="form-input" id="oee-p4-stilstand" placeholder="0" min="0"></div>
-    </div>
-
-    <div class="kpi-form-section">
-      <div class="kpi-form-section-title" style="color:var(--idert);">IDE RT — Geplande uren (max 161u · 500 kg/u)</div>
-      <div class="form-row-2">
-        <div class="form-row"><label class="form-label">Geplande uren</label><input type="number" class="form-input" id="oee-idert-plan" placeholder="161" min="0" max="161"></div>
-        <div class="form-row"><label class="form-label">Stilstand (u)</label><input type="number" class="form-input" id="oee-idert-stilstand" placeholder="0" min="0"></div>
-      </div>
-    </div>
-
-    <div class="form-row"><label class="form-label">Opmerking</label><textarea class="form-textarea" id="oee-plan-opmerking" placeholder="Optionele opmerking..."></textarea></div>
-    <div class="modal-footer">
-      <button class="btn" onclick="closeModal('oee-planning')">Annuleren</button>
-      <button class="btn btn-primary" onclick="saveOeePlanning()"><i class="ti ti-check"></i> Opslaan</button>
-    </div>
-  </div>
-</div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
@@ -544,7 +501,7 @@ console.log('Dashboard v10 loading, kpiData will have',SEED_KPI.length,'records'
 const load=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}};
 const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}};
 
-let kpiData=load('db_kpi11',SEED_KPI);
+let kpiData=load('db_kpi12',SEED_KPI);
 let techData=load('db_tech11',SEED_TECH);
 let opsData=load('db_ops11',SEED_OPS);
 let actiesData=load('db_act11',SEED_ACT);
@@ -611,7 +568,7 @@ function computeWeeklySummary(){
     if(!w||w===0)return;
     if(!weeks[w]) weeks[w]={week:w,p1_out:0,p1_plan:0,p1_mu:0,p1_hton_sum:0,p1_days:0,
                                     p4_out:0,p4_plan:0,p4_mu:0,p4_hton_sum:0,p4_days:0,
-                                    cv_out:0,cv_plan:0,cv_mu:0,cv_hton_sum:0,cv_days:0};
+                                    cv_out:0,cv_out_totaal:0,cv_plan:0,cv_plan_totaal:0,cv_mu:0,cv_hton_sum:0,cv_days:0};
     const wk=weeks[w];
     if(r.afd==='P1'){
       wk.p1_out+=r.output||0;
@@ -625,7 +582,9 @@ function computeWeeklySummary(){
       if(r.hton){wk.p4_hton_sum+=r.hton;wk.p4_days++;}
     } else if(r.afd==='Converting'){
       wk.cv_out+=r.output||0;
+      wk.cv_out_totaal+=(r.output_totaal||0);
       wk.cv_plan+=r.plan||0;
+      wk.cv_plan_totaal+=(r.plan_totaal||0);
       wk.cv_mu+=r.uren||0;
       if(r.hton){wk.cv_hton_sum+=r.hton;wk.cv_days++;}
     }
@@ -637,7 +596,8 @@ function computeWeeklySummary(){
     p1_hton:w.p1_days?Math.round(w.p1_hton_sum/w.p1_days*100)/100:null,
     p4_out:w.p4_out, p4_plan:w.p4_plan||null, p4_mu:w.p4_mu,
     p4_hton:w.p4_days?Math.round(w.p4_hton_sum/w.p4_days*100)/100:null,
-    cv_out:w.cv_out, cv_plan:w.cv_plan||null, cv_mu:w.cv_mu,
+    cv_out:w.cv_out, cv_out_totaal:w.cv_out_totaal,
+    cv_plan:w.cv_plan||null, cv_plan_totaal:w.cv_plan_totaal||null, cv_mu:w.cv_mu,
     cv_hton:w.cv_days?Math.round(w.cv_hton_sum/w.cv_days*100)/100:null,
   })).sort((a,b)=>a.week-b.week);
 }
@@ -788,7 +748,7 @@ function renderAfd(afd){
         <div style="margin-top:8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:6px;">
           <div style="font-size:12px;"><span style="color:var(--text3);">${afd==='CV'?'Output BK\'s':'Output'}</span><br><b>${d.output.toLocaleString('nl-BE')}</b> kg</div>
           ${afd==='CV'&&d.output_totaal?`<div style="font-size:12px;"><span style="color:var(--text3);">Totale output</span><br><b>${d.output_totaal.toLocaleString('nl-BE')}</b> kg</div>`:''}
-          <div style="font-size:12px;"><span style="color:var(--text3);">Plan BK's</span><br><b>${d.plan!=null?d.plan.toLocaleString('nl-BE'):'—'}</b> kg</div>
+          <div style="font-size:12px;"><span style="color:var(--text3);">${afd==='CV'?"Plan BK's":'Plan'}</span><br><b>${d.plan!=null?d.plan.toLocaleString('nl-BE'):'—'}</b> kg</div>
           <div style="font-size:12px;"><span style="color:var(--text3);">H/ton</span><br><b class="${hok?'ok':'nok'}">${d.hton!=null?d.hton:'—'}</b></div>
           ${d.uren!=null?`<div style="font-size:12px;"><span style="color:var(--text3);">Manuren</span><br><b>${d.uren}</b></div>`:''}
           ${d.kgmh!=null?`<div style="font-size:12px;"><span style="color:var(--text3);">Kg/mh</span><br><b>${d.kgmh}</b></div>`:''}
@@ -835,8 +795,9 @@ function renderAfd(afd){
           <span class="badge ${vs!=null&&vs>=0?'badge-done':'badge-open'}">${vs!=null?(vs>=0?'▲ +'+Math.abs(vs).toLocaleString('nl-BE'):'▼ '+Math.abs(vs).toLocaleString('nl-BE'))+' vs plan':'—'}</span>
         </div>
         <div style="margin-top:8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:6px;">
-          <div style="font-size:12px;"><span style="color:var(--text3);">Output</span><br><b>${(out||0).toLocaleString('nl-BE')}</b> kg</div>
-          <div style="font-size:12px;"><span style="color:var(--text3);">Plan</span><br><b>${plan!=null?plan.toLocaleString('nl-BE'):'—'}</b> kg</div>
+          <div style="font-size:12px;"><span style="color:var(--text3);">${afd==='CV'?"Output BK's":'Output'}</span><br><b>${(out||0).toLocaleString('nl-BE')}</b> kg</div>
+          ${afd==='CV'?`<div style="font-size:12px;"><span style="color:var(--text3);">Totale output</span><br><b>${(w.cv_out_totaal||0).toLocaleString('nl-BE')}</b> kg</div>`:''}
+          <div style="font-size:12px;"><span style="color:var(--text3);">${afd==='CV'?'Plan BK\'s':'Plan'}</span><br><b>${plan!=null?plan.toLocaleString('nl-BE'):'—'}</b> kg</div>
           <div style="font-size:12px;"><span style="color:var(--text3);">H/ton</span><br><b class="${hok?'ok':'nok'}">${ht!=null?ht:'—'}</b></div>
           ${mu?`<div style="font-size:12px;"><span style="color:var(--text3);">Manuren</span><br><b>${mu}</b></div>`:''}
         </div>
@@ -892,7 +853,7 @@ function saveKpi(){
     kgmh:num($('kpi-kgmh').value),ekg:num($('kpi-kgmh').value)&&num($('kpi-kgmh').value)>0?Math.round(46/num($('kpi-kgmh').value)*10000)/10000:null,
     afkeur:null,verantw:$('kpi-verantw').value,opmerking:$('kpi-opmerking').value};
   if(w){Object.assign(w,rec);}else{kpiData.push(rec);}
-  saveAndSync('db_kpi11',kpiData);saveAndSync('db_nid11',nextId);
+  saveAndSync('db_kpi12',kpiData);saveAndSync('db_nid11',nextId);
   closeModal('kpi');renderKpiOverview();renderAfd(afd==='Converting'?'CV':afd);
 }
 
@@ -1150,7 +1111,7 @@ function saveKpiNote(id, afd){
   const ta=document.getElementById('kpi-note-ta-'+id);
   if(!ta)return;
   const rec=kpiData.find(d=>d.id===+id);
-  if(rec){rec.opmerking=ta.value;saveAndSync('db_kpi11',kpiData);}
+  if(rec){rec.opmerking=ta.value;saveAndSync('db_kpi12',kpiData);}
   toggleKpiNote(id);
   renderAfd(afd==='Converting'?'CV':afd);
 }
@@ -1172,7 +1133,7 @@ function saveIdertNote(id){
 function deleteKpiRec(id, afd){
   if(!confirm('KPI record verwijderen?'))return;
   kpiData=kpiData.filter(d=>d.id!==id);
-  saveAndSync('db_kpi11',kpiData);
+  saveAndSync('db_kpi12',kpiData);
   renderKpiOverview();
   renderAfd(afd==='Converting'?'CV':afd);
 }
@@ -1280,7 +1241,7 @@ function importData(input){
     try{
       const data=JSON.parse(e.target.result);
       let imported=0;
-      if(data.kpi&&Array.isArray(data.kpi)){kpiData=data.kpi;saveAndSync('db_kpi11',kpiData);imported++;}
+      if(data.kpi&&Array.isArray(data.kpi)){kpiData=data.kpi;saveAndSync('db_kpi12',kpiData);imported++;}
       if(data.tech&&Array.isArray(data.tech)){techData=data.tech;saveAndSync('db_tech11',techData);imported++;}
       if(data.ops&&Array.isArray(data.ops)){opsData=data.ops;saveAndSync('db_ops11',opsData);imported++;}
       if(data.acties&&Array.isArray(data.acties)){actiesData=data.acties;saveAndSync('db_act11',actiesData);imported++;}
@@ -1341,7 +1302,23 @@ function applyPayload(data){
     return;
   }
   isApplying=true;
-  if(data.kpi&&Array.isArray(data.kpi)){kpiData=data.kpi;_origSave('db_kpi11',kpiData);}
+  if(data.kpi&&Array.isArray(data.kpi)){
+    // Merge output_totaal and plan_totaal from SEED_KPI for Converting records
+    // (Firebase data may be older and missing these fields)
+    const seedMap={};
+    SEED_KPI.forEach(r=>{seedMap[r.afd+'_'+r.datum]=r;});
+    kpiData=data.kpi.map(r=>{
+      if(r.afd==='Converting'&&(r.output_totaal==null||r.output_totaal===undefined)){
+        const seed=seedMap['Converting_'+r.datum];
+        if(seed){
+          r.output_totaal=seed.output_totaal;
+          r.plan_totaal=seed.plan_totaal;
+        }
+      }
+      return r;
+    });
+    _origSave('db_kpi12',kpiData);
+  }
   if(data.tech&&Array.isArray(data.tech)){techData=data.tech;_origSave('db_tech11',techData);}
   if(data.ops&&Array.isArray(data.ops)){opsData=data.ops;_origSave('db_ops11',opsData);}
   if(data.acties&&Array.isArray(data.acties)){actiesData=data.acties;_origSave('db_act11',actiesData);}
@@ -1514,7 +1491,7 @@ function fixWeekNumbers(){
     const correct=isoWeek(r.datum);
     if(correct&&r.week!==correct){r.week=correct;changed=true;}
   });
-  if(changed) save('db_kpi11',kpiData);
+  if(changed) save('db_kpi12',kpiData);
 
   // Fix IDE RT extra data
   let extra=load('db_idert_extra',[]);
@@ -1536,18 +1513,6 @@ function fixWeekNumbers(){
 
 
 
-function openModal_oee(){
-  // Pre-fill week with current ISO week
-  const d=new Date(); const dn=d.getUTCDay()||7;
-  d.setUTCDate(d.getUTCDate()+4-dn);
-  const ys=new Date(Date.UTC(d.getUTCFullYear(),0,1));
-  const wk=Math.ceil(((d-ys)/86400000+1)/7);
-  $('oee-plan-week').value=wk;
-  $('oee-week-label').textContent=wk;
-  $('oee-plan-jaar').value=new Date().getFullYear();
-  document.getElementById('modal-oee-planning').classList.add('open');
-}
-
 // Clear old localStorage keys from previous versions
 ['db_kpi5','db_kpi6','db_kpi7','db_kpi8','db_kpi9',
  'db_tech5','db_tech6','db_tech7','db_tech8','db_tech9',
@@ -1560,6 +1525,7 @@ function openModal_oee(){
 
 $('datum-display').textContent
 $('datum-display').textContent=new Date().toLocaleDateString('nl-BE',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
 syncFromCloud().then(ok=>{
   fixWeekNumbers();
   renderKpiOverview();
