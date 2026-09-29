@@ -188,6 +188,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div style="display:flex;align-items:center;gap:10px;"><div style="width:12px;height:36px;border-radius:3px;background:var(--p1);"></div><div><div style="font-size:17px;font-weight:500;">Afdeling P1</div><div style="font-size:12px;color:var(--text2);">Verantwoordelijke: <b>DOP</b> · Doel h/ton: ≤ 6,1</div></div></div>
       <button class="btn btn-afd" data-afd="P1" onclick="openKpiModal('P1')"><i class="ti ti-plus"></i> KPI invoeren</button>
     </div>
+    <div class="metric-grid" id="P1-metrics"></div>
     <div class="chart-tabs">
       <button class="chart-tab active" onclick="switchAfdView('P1','daily',this)">Per dag</button>
       <button class="chart-tab" onclick="switchAfdView('P1','weekly',this)">Per week</button>
@@ -204,6 +205,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div style="display:flex;align-items:center;gap:10px;"><div style="width:12px;height:36px;border-radius:3px;background:var(--p4);"></div><div><div style="font-size:17px;font-weight:500;">Afdeling P4</div><div style="font-size:12px;color:var(--text2);">Verantwoordelijke: <b>PDB</b> · Doel h/ton: ≤ 10,0</div></div></div>
       <button class="btn btn-afd" data-afd="P4" onclick="openKpiModal('P4')"><i class="ti ti-plus"></i> KPI invoeren</button>
     </div>
+    <div class="metric-grid" id="P4-metrics"></div>
     <div class="chart-tabs">
       <button class="chart-tab active" onclick="switchAfdView('P4','daily',this)">Per dag</button>
       <button class="chart-tab" onclick="switchAfdView('P4','weekly',this)">Per week</button>
@@ -220,6 +222,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div style="display:flex;align-items:center;gap:10px;"><div style="width:12px;height:36px;border-radius:3px;background:var(--cv);"></div><div><div style="font-size:17px;font-weight:500;">Afdeling Converting</div><div style="font-size:12px;color:var(--text2);">Verantwoordelijke: <b>YAL</b> · Doel h/ton: ≤ 11,0 · Output = BK's (eindprod)</div></div></div>
       <button class="btn btn-afd" data-afd="Converting" onclick="openKpiModal('Converting')"><i class="ti ti-plus"></i> KPI invoeren</button>
     </div>
+    <div class="metric-grid" id="CV-metrics"></div>
     <div class="chart-tabs">
       <button class="chart-tab active" onclick="switchAfdView('CV','daily',this)">Per dag</button>
       <button class="chart-tab" onclick="switchAfdView('CV','weekly',this)">Per week</button>
@@ -706,7 +709,36 @@ function setAfdRange(afd,days,btn){
   renderAfd(afd);
 }
 
+
+// ── YTD gemiddelde weekoutput per afdeling ─────────────────────────────────
+function renderAfdMetrics(afd){
+  const el = $(afd+'-metrics');
+  if(!el) return;
+  const field = afd==='P1'?'p1_out':afd==='P4'?'p4_out':'cv_out';
+  const fieldTot = afd==='CV'?'cv_out_totaal':null;
+  const weeks = computeWeeklySummary().filter(w=>w[field]>0);
+  if(!weeks.length){ el.innerHTML=''; return; }
+
+  const avgWeek = Math.round(weeks.reduce((s,w)=>s+w[field],0)/weeks.length);
+  const lastWeek = weeks[weeks.length-1];
+  const ytdTotal = weeks.reduce((s,w)=>s+w[field],0);
+
+  let extraMetric = '';
+  if(afd==='CV'){
+    const avgTotaal = Math.round(weeks.reduce((s,w)=>s+(w.cv_out_totaal||0),0)/weeks.length);
+    extraMetric = `<div class="metric"><div class="metric-label">Gem. totale output/week</div><div class="metric-value">${avgTotaal.toLocaleString('nl-BE')} kg</div></div>`;
+  }
+
+  el.innerHTML = `
+    <div class="metric"><div class="metric-label">Gem. output/week YTD</div><div class="metric-value">${avgWeek.toLocaleString('nl-BE')} kg</div></div>
+    ${extraMetric}
+    <div class="metric"><div class="metric-label">Laatste week (W${lastWeek.week})</div><div class="metric-value">${lastWeek[field].toLocaleString('nl-BE')} kg</div></div>
+    <div class="metric"><div class="metric-label">Totaal YTD</div><div class="metric-value">${ytdTotal.toLocaleString('nl-BE')} kg</div></div>
+    <div class="metric"><div class="metric-label">Aantal weken</div><div class="metric-value">${weeks.length}</div></div>`;
+}
+
 function renderAfd(afd){
+  renderAfdMetrics(afd);
   const cfg=AFD_CONFIG[afd==='CV'?'Converting':afd];
   const color=cfg.color; const doel=cfg.doelHton;
   const canvasId='chart'+afd;
