@@ -2,7 +2,7 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="app-version" content="20260602082300">
+<meta name="app-version" content="20261112135127">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>IPB — Dagoverlegbord Direct Reports</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
@@ -102,6 +102,42 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .week-table td{padding:8px 8px;border-bottom:0.5px solid var(--border);vertical-align:middle;}
 .week-table tr:last-child td{border-bottom:none;}
 .week-table tr:hover td{background:var(--bg2);}
+.jet-drop{display:flex;flex-direction:column;align-items:center;gap:6px;padding:1.25rem;border:1.5px dashed var(--border2);border-radius:var(--r);background:var(--bg2);color:var(--text2);font-size:13px;cursor:pointer;text-align:center;}
+.jet-drop.over{border-color:var(--p1);background:var(--bg3);}
+.jet-file{font-size:12px;padding:5px 0;display:flex;gap:6px;align-items:center;}
+.jet-file.ok{color:var(--ok);} .jet-file.err{color:var(--nok);} .jet-file b{color:var(--text);}
+.jet-warn{background:rgba(232,160,32,0.12);color:var(--text);border-left:3px solid var(--warn);border-radius:6px;padding:8px 10px;font-size:12px;margin-bottom:10px;line-height:1.6;}
+.jet-tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.jet-tbl th{text-align:left;color:var(--text3);font-weight:500;padding:5px 8px;border-bottom:0.5px solid var(--border2);}
+.jet-tbl td{padding:4px 8px;color:var(--text);}
+.jet-tbl tr.first td{border-top:0.5px solid var(--border);}
+.jet-tbl .r{text-align:right;font-variant-numeric:tabular-nums;}
+.jet-tbl .old{color:var(--text3);} .jet-tbl .new{font-weight:600;}
+.jet-new{font-size:10px;background:var(--ok);color:#fff;border-radius:4px;padding:1px 5px;margin-left:4px;}
+.bez-tabs{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
+.bez-tab{padding:4px 12px;border-radius:var(--r);border:0.5px solid var(--border2);background:var(--bg);font-size:12px;cursor:pointer;color:var(--text2);}
+.bez-tab.on{background:var(--p1);color:#fff;border-color:var(--p1);}
+.bez-post{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--r);padding:8px 10px;margin-bottom:6px;}
+.bez-head{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:12px;color:var(--text2);margin-bottom:6px;}
+.bez-chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;}
+.bez-chip{min-width:34px;height:28px;padding:0 6px;border-radius:6px;border:0.5px solid var(--border2);background:var(--bg);font-size:12px;cursor:pointer;color:var(--text2);}
+.bez-chip.on{background:var(--p1);color:#fff;border-color:var(--p1);}
+.bez-chip.busy{border-style:dashed;color:var(--text3);cursor:not-allowed;}
+.bez-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--text2);}
+.bez-row input,.bez-row select{padding:4px 6px;font-size:12px;height:28px;}
+.bez-err{font-size:12px;color:var(--nok);margin:4px 0;}
+.bez-sum{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:5px;margin:8px 0 4px;}
+.bez-sum div{background:var(--bg);border-radius:6px;padding:4px 6px;text-align:center;font-size:11px;color:var(--text3);}
+.bez-sum b{display:block;font-size:14px;color:var(--text);}
+.mu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;margin-bottom:6px;}
+.mu-grid label{display:block;font-size:11px;color:var(--text3);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mu-grid input{padding:6px 8px;}
+.cvm-bar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.cvm-nav{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;}
+.cvm-nav button{padding:3px 9px;}
+.cvm-tbl td.r,.cvm-tbl th.r{text-align:right;font-variant-numeric:tabular-nums;}
+.cvm-tbl tr.tot td{font-weight:600;border-top:1px solid var(--border2);}
+.cvm-tbl .ok{color:var(--ok);} .cvm-tbl .nok{color:var(--nok);} .cvm-tbl .mut{color:var(--text3);}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;align-items:center;justify-content:center;padding:1rem;}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--bg);border-radius:var(--rl);padding:1.5rem;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;border:0.5px solid var(--border2);}
@@ -140,6 +176,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <span style="font-size:12px;color:var(--text3);" id="datum-display"></span>
         <button class="btn" onclick="window.print()" style="padding:5px 10px;"><i class="ti ti-printer"></i></button>
         <button class="btn" onclick="exportData()" style="padding:5px 10px;" title="Backup exporteren als JSON"><i class="ti ti-download"></i></button>
+        <button class="btn" onclick="openJetImport()" style="padding:5px 10px;" title="JET-rapporten inlezen (Extrusie, Converting, Munchy)"><i class="ti ti-file-import"></i> JET</button>
         <button class="btn" onclick="exportExcel()" style="padding:5px 10px;" title="Exporteren naar Excel"><i class="ti ti-file-spreadsheet"></i></button>
         <button class="btn" onclick="document.getElementById('import-input').click()" style="padding:5px 10px;" title="Backup importeren"><i class="ti ti-upload"></i></button>
         <input type="file" id="import-input" accept=".json" style="display:none;" onchange="importData(this)">
@@ -156,10 +193,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <button class="nav-btn" onclick="switchTab('p1',this)">P1</button>
     <button class="nav-btn" onclick="switchTab('p4',this)">P4</button>
     <button class="nav-btn" onclick="switchTab('cv',this)">Converting</button>
-    <a href="https://maintenance-ipb.web.app/" target="_blank" class="nav-btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;"><i class="ti ti-tool"></i> Technische dienst <i class="ti ti-external-link" style="font-size:11px;opacity:0.7;"></i></a>
-    <button class="nav-btn" onclick="switchTab('ops',this)"><i class="ti ti-alert-triangle"></i> Operationele problemen</button>
-    <button class="nav-btn" onclick="switchTab('acties',this)"><i class="ti ti-checkbox"></i> Acties</button>
-    <button class="nav-btn" onclick="switchTab('veiligheid',this)"><i class="ti ti-shield"></i> Veiligheid</button>
     <button class="nav-btn" onclick="switchTab('recycling',this)"><i class="ti ti-recycle"></i> Recycling</button>
   </div>
 
@@ -195,6 +228,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
     <div class="time-btns" id="P1-time-btns"><button class="time-btn active" onclick="setAfdRange('P1',0,this)">Alles</button><button class="time-btn" onclick="setAfdRange('P1',90,this)">3m</button><button class="time-btn" onclick="setAfdRange('P1',30,this)">1m</button><button class="time-btn" onclick="setAfdRange('P1',14,this)">2w</button></div>
     <div class="chart-wrap"><canvas id="chartP1"></canvas></div>
+    <div class="section-label">Per lijn</div>
+    <div class="card" id="p1-lines"></div>
     <div class="section-label">Detail</div>
     <div id="list-P1"></div>
   </div>
@@ -212,6 +247,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
     <div class="time-btns" id="P4-time-btns"><button class="time-btn active" onclick="setAfdRange('P4',0,this)">Alles</button><button class="time-btn" onclick="setAfdRange('P4',90,this)">3m</button><button class="time-btn" onclick="setAfdRange('P4',30,this)">1m</button><button class="time-btn" onclick="setAfdRange('P4',14,this)">2w</button></div>
     <div class="chart-wrap"><canvas id="chartP4"></canvas></div>
+    <div class="section-label">Per lijn</div>
+    <div class="card" id="p4-lines"></div>
     <div class="section-label">Detail</div>
     <div id="list-P4"></div>
   </div>
@@ -229,6 +266,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
     <div class="time-btns" id="CV-time-btns"><button class="time-btn active" onclick="setAfdRange('CV',0,this)">Alles</button><button class="time-btn" onclick="setAfdRange('CV',90,this)">3m</button><button class="time-btn" onclick="setAfdRange('CV',30,this)">1m</button><button class="time-btn" onclick="setAfdRange('CV',14,this)">2w</button></div>
     <div class="chart-wrap"><canvas id="chartCV"></canvas></div>
+    <div class="section-label">Per machine</div>
+    <div class="card" id="cv-mach"></div>
     <div class="section-label">Detail</div>
     <div id="list-CV"></div>
   </div>
@@ -339,13 +378,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="modal-overlay" id="modal-kpi">
   <div class="modal">
     <div class="modal-title"><span>KPI invoeren — <span id="kpi-modal-afd-label" class="modal-afd-badge"></span></span><button class="modal-close" onclick="closeModal('kpi')">&times;</button></div>
-    <div class="form-row"><label class="form-label">Datum *</label><input type="date" class="form-input" id="kpi-datum"></div>
+    <div class="form-row"><label class="form-label">Datum *</label><input type="date" class="form-input" id="kpi-datum" onchange="kpiDateChanged()"><div class="form-hint" id="kpi-datum-hint"></div></div>
     <div class="form-row"><label class="form-label">Ingegeven door</label><input type="text" class="form-input" id="kpi-verantw"><div class="form-hint" id="kpi-verantw-hint"></div></div>
     <div class="kpi-form-section">
       <div class="kpi-form-section-title" id="kpi-section-title"></div>
       <div class="form-row-3">
         <div class="form-row"><label class="form-label" id="kpi-output-label">Output (kg)</label><input type="number" class="form-input" id="kpi-output" oninput="calcKpiAuto()"></div>
-        <div class="form-row"><label class="form-label">Plan (kg)</label><input type="number" class="form-input" id="kpi-plan"></div>
+        <div class="form-row"><label class="form-label">Plan (kg)</label><input type="number" class="form-input" id="kpi-plan" oninput="delete this.dataset.auto"></div>
         <div class="form-row"><label class="form-label">H/ton <span style="font-size:10px;color:var(--text3);">(auto)</span></label><input type="number" step="0.1" class="form-input" id="kpi-hton" readonly style="background:var(--bg3);"></div>
       </div>
       <div class="form-row" id="kpi-totaal-row" style="display:none;">
@@ -353,9 +392,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <input type="number" class="form-input" id="kpi-output-totaal">
       </div>
       <div class="form-row-2">
-        <div class="form-row"><label class="form-label">Manuren</label><input type="number" class="form-input" id="kpi-uren" oninput="calcKpiAuto()"></div>
+        <div class="form-row" style="display:none;"><label class="form-label">Directe manuren</label><input type="number" class="form-input" id="kpi-uren" oninput="calcKpiAuto()"></div>
         <div class="form-row"><label class="form-label">Kg/mh <span style="font-size:10px;color:var(--text3);">(auto)</span></label><input type="number" step="0.1" class="form-input" id="kpi-kgmh" readonly style="background:var(--bg3);"></div>
       </div>
+      <div id="kpi-mach-uren">
+        <label class="form-label" id="kpi-mach-title">Directe manuren per lijn</label>
+        <div id="kpi-bez" style="display:none;"></div>
+        <div class="mu-grid" id="kpi-mach-grid"></div>
+        <div id="kpi-mu-total" style="font-size:13px;margin:4px 0 6px;color:var(--text);"></div>
+        <div class="form-hint" id="kpi-mach-hint"></div>
+      </div>
+      <div class="form-row" style="margin-top:10px;"><label class="form-label">Indirecte manuren <span style="font-size:10px;color:var(--text3);">(andere aanwezigen in de afdeling, niet in de h/ton)</span></label><input type="number" step="0.25" min="0" class="form-input" id="kpi-uren-ind"></div>
     </div>
     <div class="form-row"><label class="form-label">Opmerking</label><textarea class="form-textarea" id="kpi-opmerking"></textarea></div>
     <div class="modal-footer"><button class="btn" onclick="closeModal('kpi')">Annuleren</button><button class="btn btn-primary" onclick="saveKpi()"><i class="ti ti-check"></i> Opslaan</button></div>
@@ -443,6 +490,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 <!-- Firebase Sync Config Modal -->
+<div class="modal-overlay" id="modal-jet">
+  <div class="modal" style="max-width:720px;">
+    <div class="modal-title">📥 JET-rapporten inlezen <button class="modal-close" onclick="closeModal('jet')">&times;</button></div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:0.75rem;line-height:1.6;">
+      Sleep de PDF-bijlagen van de JET-mails hierheen: <b>Productie Extrusie</b>, <b>Productie Converting</b>, <b>Performance Munchy</b> en de <b>Dagplanning</b> van Extrusie en Converting.
+      Alle volledige dagen van de week worden ingelezen; de dag van het rapport zelf niet, want die is nog onvolledig.
+    </p>
+    <label class="jet-drop" id="jet-drop">
+      <i class="ti ti-file-upload" style="font-size:26px;"></i>
+      <div><b>Sleep PDF’s hierheen</b> of klik om te kiezen</div>
+      <input type="file" id="jet-file-input" accept=".pdf,application/pdf" multiple style="display:none;" onchange="jetHandleFiles(this.files)">
+    </label>
+    <div id="jet-files" style="margin:10px 0;"></div>
+    <div id="jet-preview"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal('jet')">Annuleren</button>
+      <button class="btn btn-primary" id="jet-apply" onclick="jetApply()" disabled><i class="ti ti-check"></i> Inlezen</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="sync-config-modal">
   <div class="modal">
     <div class="modal-title">☁️ Cloud synchronisatie instellen <button class="modal-close" onclick="document.getElementById('sync-config-modal').classList.remove('open')">&times;</button></div>
@@ -482,7 +550,8 @@ window.onerror=function(msg,src,line,col,err){document.body.innerHTML='<div styl
 </script>
 <script>
 const $=id=>document.getElementById(id);
-const today=()=>new Date().toISOString().slice(0,10);
+const localISO=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=()=>localISO(new Date());
 const fmtDate=s=>{if(!s)return'';try{const d=new Date(s+'T00:00');return d.toLocaleDateString('nl-BE',{day:'2-digit',month:'2-digit',year:'numeric'});}catch(e){return s;}};
 const num=v=>(v!=null&&v!=='')?+v:null;
 const isDark=()=>window.matchMedia('(prefers-color-scheme:dark)').matches;
@@ -569,10 +638,12 @@ function computeWeeklySummary(){
   uniqueRecs.forEach(r=>{
     const w=r.week;
     if(!w||w===0)return;
-    if(!weeks[w]) weeks[w]={week:w,p1_out:0,p1_plan:0,p1_mu:0,p1_hton_sum:0,p1_days:0,
+    const k=wkKey(r.datum,w);
+    if(!weeks[k]) weeks[k]={week:w,yr:Math.floor(k/100),wkey:k,start:r.datum,p1_out:0,p1_plan:0,p1_mu:0,p1_hton_sum:0,p1_days:0,
                                     p4_out:0,p4_plan:0,p4_mu:0,p4_hton_sum:0,p4_days:0,
                                     cv_out:0,cv_out_totaal:0,cv_plan:0,cv_plan_totaal:0,cv_mu:0,cv_hton_sum:0,cv_days:0};
-    const wk=weeks[w];
+    const wk=weeks[k];
+    if(r.datum<wk.start) wk.start=r.datum;
     if(r.afd==='P1'){
       wk.p1_out+=r.output||0;
       wk.p1_plan+=r.plan||0;
@@ -592,17 +663,19 @@ function computeWeeklySummary(){
       if(r.hton){wk.cv_hton_sum+=r.hton;wk.cv_days++;}
     }
   });
-  // Convert to array and add averaged h/ton
+  // Week-h/ton = totale manuren / totale output in ton (gewogen), zoals in de jaarcijfers.
+  // Niet het gemiddelde van de dag-h/ton: dagen met weinig output wegen daar veel te zwaar.
+  const wHton=(mu,out)=>mu>0&&out>0?Math.round(mu/(out/1000)*100)/100:null;
   return Object.values(weeks).map(w=>({
-    week:w.week,
+    week:w.week, yr:w.yr, wkey:w.wkey, start:w.start,
     p1_out:w.p1_out, p1_plan:w.p1_plan||null, p1_mu:w.p1_mu,
-    p1_hton:w.p1_days?Math.round(w.p1_hton_sum/w.p1_days*100)/100:null,
+    p1_hton:wHton(w.p1_mu,w.p1_out),
     p4_out:w.p4_out, p4_plan:w.p4_plan||null, p4_mu:w.p4_mu,
-    p4_hton:w.p4_days?Math.round(w.p4_hton_sum/w.p4_days*100)/100:null,
+    p4_hton:wHton(w.p4_mu,w.p4_out),
     cv_out:w.cv_out, cv_out_totaal:w.cv_out_totaal,
     cv_plan:w.cv_plan||null, cv_plan_totaal:w.cv_plan_totaal||null, cv_mu:w.cv_mu,
-    cv_hton:w.cv_days?Math.round(w.cv_hton_sum/w.cv_days*100)/100:null,
-  })).sort((a,b)=>a.week-b.week);
+    cv_hton:wHton(w.cv_mu,w.cv_out),
+  })).sort((a,b)=>a.wkey-b.wkey);
 }
 
 function renderKpiOverview(){
@@ -610,7 +683,7 @@ function renderKpiOverview(){
   // Find last available date per afdeling (today or most recent before)
   function lastRec(afd){
     const yd=new Date();yd.setDate(yd.getDate()-1);
-    const ydStr=yd.toISOString().slice(0,10);
+    const ydStr=localISO(yd);
     // Only return data if there's a record for exactly yesterday
     const dedupMap={};
     kpiData.filter(d=>d.afd===afd&&d.datum===ydStr).forEach(r=>{
@@ -621,7 +694,7 @@ function renderKpiOverview(){
   }
   function lastIdert(){
     const yd=new Date();yd.setDate(yd.getDate()-1);
-    const ydStr=yd.toISOString().slice(0,10);
+    const ydStr=localISO(yd);
     // Only show if there's data for exactly yesterday
     const recs=getDaily(0).filter(d=>d.datum===ydStr);
     return recs[0]||null;
@@ -672,10 +745,10 @@ function renderKpiOverview(){
   // Week table
   const wdata=computeWeeklySummary().slice(-10).reverse();
   const idertMap={};
-  computeIdertWeekly().forEach(w=>{idertMap[w.week]=w.idert_total||0;});
+  computeIdertWeekly().forEach(w=>{idertMap[w.wkey]=w.idert_total||0;});
   $('kpi-week-tbody').innerHTML=wdata.map(w=>{
     const p1ok=w.p1_plan!=null&&w.p1_out>=w.p1_plan; const p4ok=w.p4_plan!=null&&w.p4_out>=w.p4_plan; const cvok=w.cv_plan!=null&&w.cv_out>=w.cv_plan;
-    const idert=idertMap[w.week]||0;
+    const idert=idertMap[w.wkey]||0;
     return`<tr>
       <td><b>W${w.week}</b></td>
       <td class="${p1ok?'ok':'nok'}">${(w.p1_out!=null?w.p1_out.toLocaleString('nl-BE'):'—')}</td>
@@ -716,12 +789,28 @@ function renderAfdMetrics(afd){
   if(!el) return;
   const field = afd==='P1'?'p1_out':afd==='P4'?'p4_out':'cv_out';
   const fieldTot = afd==='CV'?'cv_out_totaal':null;
-  const weeks = computeWeeklySummary().filter(w=>w[field]>0);
-  if(!weeks.length){ el.innerHTML=''; return; }
+  const curYr = isoYear(today());
+  const allWeeks = computeWeeklySummary().filter(w=>w[field]>0&&w.yr===curYr); // YTD = huidig jaar
+  // Gemiddelde, laatste week en aantal weken alleen op volle (afgesloten) weken;
+  // de lopende week telt wel mee in het totaal YTD.
+  const curKey = wkKey(today());
+  const weeks = allWeeks.filter(w=>w.wkey<curKey);
+  if(!allWeeks.length){ el.innerHTML=''; return; }
+  if(!weeks.length) weeks.push(...allWeeks);
 
   const avgWeek = Math.round(weeks.reduce((s,w)=>s+w[field],0)/weeks.length);
   const lastWeek = weeks[weeks.length-1];
-  const ytdTotal = weeks.reduce((s,w)=>s+w[field],0);
+  const ytdTotal = allWeeks.reduce((s,w)=>s+w[field],0);
+
+  // Gem. h/ton over de volle weken: totale manuren / totale output in ton (gewogen).
+  // Weken zonder ingevulde manuren tellen niet mee, anders wordt h/ton te laag.
+  const muField = field.replace('_out','_mu');
+  const htWeeks = weeks.filter(w=>w[muField]>0);
+  const sumMu = htWeeks.reduce((s,w)=>s+w[muField],0);
+  const sumOut = htWeeks.reduce((s,w)=>s+w[field],0);
+  const avgHton = sumMu>0&&sumOut>0 ? Math.round(sumMu/(sumOut/1000)*100)/100 : null;
+  const doelHton = AFD_CONFIG[afd==='CV'?'Converting':afd].doelHton;
+  const htonMetric = `<div class="metric"><div class="metric-label">Gem. h/ton YTD</div><div class="metric-value ${avgHton!=null?(avgHton<=doelHton?'ok':'nok'):''}">${avgHton!=null?avgHton.toLocaleString('nl-BE'):'—'}</div><div class="metric-sub" style="color:var(--text3);">doel ${doelHton.toLocaleString('nl-BE')}</div></div>`;
 
   let extraMetric = '';
   if(afd==='CV'){
@@ -731,10 +820,11 @@ function renderAfdMetrics(afd){
 
   el.innerHTML = `
     <div class="metric"><div class="metric-label">Gem. output/week YTD</div><div class="metric-value">${avgWeek.toLocaleString('nl-BE')} kg</div></div>
+    ${htonMetric}
     ${extraMetric}
     <div class="metric"><div class="metric-label">Laatste week (W${lastWeek.week})</div><div class="metric-value">${lastWeek[field].toLocaleString('nl-BE')} kg</div></div>
     <div class="metric"><div class="metric-label">Totaal YTD</div><div class="metric-value">${ytdTotal.toLocaleString('nl-BE')} kg</div></div>
-    <div class="metric"><div class="metric-label">Aantal weken</div><div class="metric-value">${weeks.length}</div></div>`;
+    <div class="metric"><div class="metric-label">Volle weken</div><div class="metric-value">${weeks.length}</div></div>`;
 }
 
 function renderAfd(afd){
@@ -805,7 +895,7 @@ function renderAfd(afd){
   } else {
     // Weekly view — aggregate from prod_weekly
     let weeks=computeWeeklySummary();
-    if(state.days){const c=new Date();c.setDate(c.getDate()-state.days);weeks=weeks.filter(w=>{const wdate=allRecs.find(r=>r.week===w.week);return wdate?new Date(wdate.datum+'T00:00')>=c:true;});}
+    if(state.days){const c=new Date();c.setDate(c.getDate()-state.days);weeks=weeks.filter(w=>new Date(w.start+'T00:00')>=c);}
     const field=afd==='P1'?{out:'p1_out',plan:'p1_plan',mu:'p1_mu',ht:'p1_hton'}:afd==='P4'?{out:'p4_out',plan:'p4_plan',mu:'p4_mu',ht:'p4_hton'}:{out:'cv_out',plan:'cv_plan',mu:'cv_mu',ht:'cv_hton'};
     const wdata=weeks.filter(w=>w[field.out]>0);
 
@@ -869,10 +959,162 @@ function openKpiModal(afd){
   if(totRow) totRow.style.display=isCv?'block':'none';
   const outLabel=$('kpi-output-label');
   if(outLabel) outLabel.textContent=isCv?"Output BK's (kg)":'Output (kg)';
+  const U=UNITS[unitKeyOf(afd)];
+  $('kpi-mach-grid').innerHTML=U.list.map(([k,l])=>`<div><label for="mu-${k}" title="${l}">${l}</label><input type="number" step="0.25" min="0" class="form-input" id="mu-${k}" oninput="kpiMachSum()"></div>`).join('');
+  $('kpi-mach-title').textContent=afd==='P1'?'Bezetting van de lijnen (directe manuren)':'Directe manuren per '+U.noun;
+  $('kpi-bez').style.display=afd==='P1'?'block':'none';
+  $('kpi-mach-grid').style.display=afd==='P1'?'none':'';
+  $('kpi-mach-hint').innerHTML=isCv
+    ?'De som is het totaal aan directe manuren. Gebruik <b>Algemeen</b> voor directe uren die niet bij één machine horen.'
+    :afd==='P1'
+      ?'Leg per ploeg vast welke lijnen samen bediend worden en door hoeveel personen. De uren van een post worden gelijk verdeeld over zijn lijnen; de som is het totaal aan directe manuren.'
+      :'Directe uren = de bedienaars per lijn. De som is het totaal aan directe manuren.';
+  $('kpi-uren-ind').value='';
   $('modal-kpi').classList.add('open');
+  kpiDateChanged();
+}
+// Converting: manuren per machine
+const kpiUnits=()=>UNITS[unitKeyOf(activeKpiAfd)].list;
+
+// ── Bezetting P1: posten van bedienaars per ploeg ───────────────────────────
+// Een post = 1 of meer lijnen met hun bedienaars; de uren worden gelijk over de lijnen verdeeld.
+const PLOEGEN=[['V','Vroeg'],['L','Laat'],['N','Nacht']];
+let bez=null, bezPloeg='V';
+const bezEsc=v=>String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function bezEmpty(){return {V:[],L:[],N:[]};}
+function bezHasPosts(){return !!bez&&PLOEGEN.some(([k])=>bez[k].length);}
+function bezLoad(d){
+  const st=(load('db_ext_lijn',{})[d]||{}).bezetting;
+  bez=st?JSON.parse(JSON.stringify(st)):bezEmpty(); PLOEGEN.forEach(([k])=>{bez[k]=bez[k]||[];});
+  bezPloeg=(PLOEGEN.find(([k])=>bez[k].length)||PLOEGEN[0])[0];
+}
+function bezCalc(){
+  const per={}, errs=[];
+  P1_LIJN.forEach(([k])=>per[k]=0);
+  PLOEGEN.forEach(([pk,pn])=>{
+    const seen={};
+    bez[pk].forEach((p,i)=>{
+      const tag=pn+' · post '+(i+1);
+      if(p.lines.length!==p.m)errs.push(tag+': kies '+p.m+' lijn'+(p.m>1?'en':'')+'.');
+      if(!(p.h>0&&p.h<=12))errs.push(tag+': uren per persoon tussen 0 en 12.');
+      p.lines.forEach(l=>{if(seen[l])errs.push(pn+': lijn '+l.slice(1)+' staat in twee posten.');seen[l]=1;});
+      if(p.lines.length&&p.h>0){const t=p.n*p.h;p.lines.forEach(l=>per[l]+=t/p.lines.length);}
+    });
+  });
+  return {per,errs:[...new Set(errs)]};
+}
+function bezSync(){
+  // zet de berekende uren in de (verborgen) velden per lijn, zodat de rest van het formulier werkt zoals voorheen
+  if(bezHasPosts()){
+    const {per}=bezCalc();
+    P1_LIJN.forEach(([k])=>{$('mu-'+k).value=per[k]?Math.round(per[k]*100)/100:'';});
+  }else{
+    P1_LIJN.forEach(([k])=>{const el=$('mu-'+k);el.value=el.dataset.orig||'';});
+  }
+  kpiMachSum(); renderBez();
+}
+function bezAdd(n,m){bez[bezPloeg].push({n,m,lines:[],h:8,names:[]});bezSync();}
+function bezDel(i){bez[bezPloeg].splice(i,1);bezSync();}
+function bezTab(k){bezPloeg=k;renderBez();}
+function bezToggle(i,l){
+  const p=bez[bezPloeg][i];
+  if(bez[bezPloeg].some((q,j)=>j!==i&&q.lines.includes(l)))return;
+  if(p.lines.includes(l))p.lines=p.lines.filter(x=>x!==l);
+  else{p.lines.push(l);if(p.lines.length>p.m)p.lines.shift();}
+  p.lines.sort(); bezSync();
+}
+function bezSet(i,f,v){
+  const p=bez[bezPloeg][i];
+  if(f==='h')p.h=parseFloat(String(v).replace(',','.'))||0;
+  if(f==='n'){p.n=+v;p.names=p.names.slice(0,p.n);}
+  if(f==='m'){p.m=+v;while(p.lines.length>p.m)p.lines.pop();}
+  bezSync();
+}
+function bezName(i,k,v){bez[bezPloeg][i].names[k]=v.trim();}
+function bezCopy(){
+  const idx=PLOEGEN.findIndex(([k])=>k===bezPloeg);
+  let src=null, from='';
+  if(idx>0){src=bez[PLOEGEN[idx-1][0]];from=PLOEGEN[idx-1][1].toLowerCase()+'e ploeg';}
+  else{
+    // vroege ploeg: laatste ploeg van de meest recente vorige dag met bezetting
+    const d=$('kpi-datum').value, st=load('db_ext_lijn',{});
+    const prev=Object.keys(st).filter(x=>x<d&&st[x].bezetting).sort().pop();
+    if(prev){const b=st[prev].bezetting;const pk=[...PLOEGEN].reverse().find(([k])=>(b[k]||[]).length);
+      if(pk){src=b[pk[0]];from=pk[1].toLowerCase()+'e ploeg van '+jetFmtD(prev);}}
+  }
+  if(!src||!src.length){alert('Er is geen vorige ploeg met een bezetting om te kopiëren.');return;}
+  if(bez[bezPloeg].length&&!confirm('De bezetting van deze ploeg vervangen door die van de '+from+'?'))return;
+  bez[bezPloeg]=JSON.parse(JSON.stringify(src)); bezSync();
+}
+function renderBez(){
+  const el=$('kpi-bez'); if(!el||!bez)return;
+  const posts=bez[bezPloeg], {per,errs}=bezCalc();
+  const tabs=PLOEGEN.map(([k,n])=>{const c=bez[k].length;return `<button type="button" class="bez-tab${k===bezPloeg?' on':''}" onclick="bezTab('${k}')">${n}${c?' ('+c+')':''}</button>`;}).join('');
+  const postHtml=posts.map((p,i)=>{
+    const busy=posts.flatMap((q,j)=>j===i?[]:q.lines);
+    const std=(p.n===2&&p.m===2)||(p.n===1&&p.m===1);
+    const chips=P1_LIJN.map(([k,lab])=>`<button type="button" class="bez-chip${p.lines.includes(k)?' on':''}${busy.includes(k)?' busy':''}" onclick="bezToggle(${i},'${k}')" title="${lab}">${k.slice(1)}</button>`).join('');
+    const sel=(f,v,max)=>`<select onchange="bezSet(${i},'${f}',this.value)">${[...Array(max)].map((_,x)=>`<option${x+1===v?' selected':''}>${x+1}</option>`).join('')}</select>`;
+    return `<div class="bez-post">
+      <div class="bez-head"><span><b>Post ${i+1}</b> · ${std?(p.n===2?'2 personen, 2 lijnen':'1 persoon, 1 lijn'):`${sel('n',p.n,3)} pers. op ${sel('m',p.m,3)} lijn(en)`} · kies ${p.m} lijn${p.m>1?'en':''}</span>
+        <button type="button" class="btn" style="padding:2px 8px;" onclick="bezDel(${i})" title="Post verwijderen"><i class="ti ti-trash"></i></button></div>
+      <div class="bez-chips">${chips}</div>
+      <div class="bez-row"><span>Uren per persoon</span><input type="number" min="0" max="12" step="0.25" value="${p.h}" style="width:64px;" onchange="bezSet(${i},'h',this.value)"></div>
+    </div>`;}).join('');
+  const tot=Object.values(per).reduce((a,b)=>a+b,0);
+  el.innerHTML=`<div class="bez-tabs">${tabs}<button type="button" class="btn" style="padding:4px 10px;font-size:12px;margin-left:auto;" onclick="bezCopy()"><i class="ti ti-copy"></i> Kopieer vorige ploeg</button></div>
+    ${postHtml||'<div class="form-hint" style="margin-bottom:6px;">Nog geen posten voor deze ploeg.</div>'}
+    <div class="bez-row" style="margin:6px 0;">
+      <button type="button" class="btn" style="padding:4px 10px;font-size:12px;" onclick="bezAdd(2,2)"><i class="ti ti-plus"></i> 2 personen, 2 lijnen</button>
+      <button type="button" class="btn" style="padding:4px 10px;font-size:12px;" onclick="bezAdd(1,1)"><i class="ti ti-plus"></i> 1 persoon, 1 lijn</button>
+      <button type="button" class="btn" style="padding:4px 10px;font-size:12px;" onclick="bezAdd(2,1)"><i class="ti ti-plus"></i> Andere bezetting</button>
+    </div>
+    ${errs.map(e=>`<div class="bez-err">${bezEsc(e)}</div>`).join('')}
+    ${bezHasPosts()?`<div class="bez-sum">${P1_LIJN.map(([k])=>`<div>Lijn ${k.slice(1)}<b>${per[k]?(Math.round(per[k]*100)/100).toLocaleString('nl-BE'):'—'}</b></div>`).join('')}</div>
+    <div class="form-hint">Uren per lijn over alle ploegen samen.</div>`:''}`;
+}
+
+function kpiMachSum(){
+  const vals=kpiUnits().map(([k])=>$('mu-'+k).value).filter(v=>v!=='');
+  const ur=$('kpi-uren'), tot=$('kpi-mu-total');
+  if(vals.length){
+    ur.value=Math.round(vals.reduce((a,v)=>a+(+v||0),0)*100)/100;
+    tot.innerHTML='Totaal directe manuren: <b>'+(+ur.value).toLocaleString('nl-BE')+'</b>';
+  }else{
+    // Oudere dagen: totaal werd vroeger in één veld ingevuld; dat blijft behouden tot er per lijn wordt ingevuld
+    const orig=ur.dataset.orig||''; ur.value=orig;
+    tot.innerHTML=orig!==''?'Totaal directe manuren: <b>'+(+orig).toLocaleString('nl-BE')+'</b> <span style="color:var(--text3);font-size:12px;">(eerder als totaal ingevuld, nog niet verdeeld)</span>'
+      :'<span style="color:var(--text3);">Totaal directe manuren: —</span>';
+  }
+  calcKpiAuto();
+}
+// Bij het kiezen van een datum: bestaande gegevens van die dag tonen (bv. na een JET-import)
+function kpiDateChanged(){
+  const afd=activeKpiAfd, d=$('kpi-datum').value;
+  const ex=d?kpiData.filter(r=>r.afd===afd&&r.datum===d).sort((a,b)=>(b.id||0)-(a.id||0))[0]:null;
+  const set=(id,v)=>{const el=$(id);if(el)el.value=v==null?'':v;};
+  set('kpi-output',ex&&ex.output);set('kpi-plan',ex&&ex.plan);set('kpi-uren',ex&&ex.uren);
+  $('kpi-uren').dataset.orig=ex&&ex.uren!=null?ex.uren:'';
+  set('kpi-output-totaal',ex&&ex.output_totaal);set('kpi-opmerking',ex?ex.opmerking:'');set('kpi-uren-ind',ex&&ex.uren_ind);
+  delete $('kpi-plan').dataset.auto;
+  $('kpi-datum-hint').textContent=ex?'Deze dag staat al op het bord; je past de bestaande gegevens aan.':'';
+  const U=UNITS[unitKeyOf(afd)];
+  const mu=(load(U.store,{})[d]||{}).uren||{};
+  U.list.forEach(([k])=>{const v=mu[k]!=null?mu[k]:'';$('mu-'+k).value=v;$('mu-'+k).dataset.orig=v;});
+  if(afd==='P1'){bezLoad(d);bezSync();}
+  kpiMachSum();
+  calcKpiAuto();
+  kpiPrefillPlan();
+}
+// Plan invullen uit de ingelezen JET-planning (alleen als het veld nog leeg is)
+function kpiPrefillPlan(){
+  const el=$('kpi-plan'), d=$('kpi-datum').value; if(!el||!d||el.value!=='')return;
+  const pj=load('db_plan_jet',{})[activeKpiAfd+'|'+d];
+  if(pj&&pj.plan!=null){el.value=pj.plan;el.dataset.auto='1';}
 }
 function saveKpi(){
   const datum=$('kpi-datum').value;if(!datum){alert('Datum verplicht.');return;}
+  if(activeKpiAfd==='P1'&&bezHasPosts()){const {errs}=bezCalc();if(errs.length){alert('Bezetting nog niet volledig:\n'+errs.join('\n'));return;}}
   // Allow output=0 (feestdag, weekend, stilstand)
   const outputVal=$('kpi-output').value;
   if(outputVal===''||outputVal===null||outputVal===undefined){alert('Output verplicht (mag 0 zijn).');return;}
@@ -883,8 +1125,36 @@ function saveKpi(){
     plan:num($('kpi-plan').value),
     hton:num($('kpi-hton').value),uren:num($('kpi-uren').value),
     kgmh:num($('kpi-kgmh').value),ekg:num($('kpi-kgmh').value)&&num($('kpi-kgmh').value)>0?Math.round(46/num($('kpi-kgmh').value)*10000)/10000:null,
-    afkeur:null,verantw:$('kpi-verantw').value,opmerking:$('kpi-opmerking').value};
+    afkeur:null,verantw:$('kpi-verantw').value,opmerking:$('kpi-opmerking').value,
+    uren_ind:num($('kpi-uren-ind').value)};
+  const pj=load('db_plan_jet',{})[afd+'|'+datum];
+  if(pj){
+    if(rec.plan==null&&pj.plan!=null)rec.plan=pj.plan;
+    if(afd==='Converting'&&(!w||w.plan_totaal==null)&&pj.plan_totaal!=null)rec.plan_totaal=pj.plan_totaal;
+  }
   if(w){Object.assign(w,rec);}else{kpiData.push(rec);}
+  { // directe uren per lijn/machine
+    const U=UNITS[unitKeyOf(afd)], keys=U.list.map(([k])=>k);
+    const mu={}; keys.forEach(k=>{const v=$('mu-'+k).value;if(v!=='')mu[k]=+v;});
+    const st=load(U.store,{}), cur=Object.assign({},(st[datum]||{}).uren||{});
+    keys.forEach(k=>delete cur[k]); Object.assign(cur,mu);   // P1 en P4 delen dezelfde opslag
+    const had=JSON.stringify((st[datum]||{}).uren||{}), now=JSON.stringify(cur);
+    if(had!==now){
+      if(Object.keys(cur).length)st[datum]=Object.assign(st[datum]||{},{uren:cur});
+      else if(st[datum]){delete st[datum].uren;if(!Object.keys(st[datum]).length)delete st[datum];}
+      saveAndSync(U.store,st);
+    }
+  }
+  if(afd==='P1'&&bez){
+    const st=load('db_ext_lijn',{}), clean={};
+    PLOEGEN.forEach(([k])=>{if(bez[k].length)clean[k]=bez[k].map(p=>({n:p.n,m:p.m,lines:p.lines.slice(),h:p.h,names:[]}));});
+    const had=JSON.stringify((st[datum]||{}).bezetting||null), now=Object.keys(clean).length?JSON.stringify(clean):'null';
+    if(had!==now){
+      if(now!=='null')st[datum]=Object.assign(st[datum]||{},{bezetting:clean});
+      else if(st[datum]){delete st[datum].bezetting;if(!Object.keys(st[datum]).length)delete st[datum];}
+      saveAndSync('db_ext_lijn',st);
+    }
+  }
   saveAndSync('db_kpi12',kpiData);saveAndSync('db_nid11',nextId);
   closeModal('kpi');renderKpiOverview();renderAfd(afd==='Converting'?'CV':afd);
 }
@@ -966,9 +1236,10 @@ function computeIdertWeekly(){
   const daily=getDaily(0);
   const weeks={};
   daily.forEach(r=>{
-    const w=r.week||0;
-    if(!w)return;
-    if(!weeks[w]) weeks[w]={week:w,idert_total:0,idert_target:0,days:0,report_date:r.datum,
+    const w0=r.week||0;
+    if(!w0)return;
+    const w=wkKey(r.datum,w0);
+    if(!weeks[w]) weeks[w]={week:w0,yr:Math.floor(w/100),wkey:w,idert_total:0,idert_target:0,days:0,report_date:r.datum,
                              scrap_real:0,scrap_p1:0,scrap_p4:0,scrap_cv:0};
     weeks[w].idert_total+=r.idert||0;
     weeks[w].idert_target=r.idert_target*7||weeks[w].idert_target;
@@ -981,7 +1252,7 @@ function computeIdertWeekly(){
   });
   return Object.values(weeks).map(w=>({
     ...w,
-    idert_target: w.idert_target||69160,
+    idert_target: w.idert_target||69300,
     perf_idert: w.idert_target?Math.round(w.idert_total/w.idert_target*100):0,
     perf_scrap: 0
   })).sort((a,b)=>a.week-b.week);
@@ -989,16 +1260,23 @@ function computeIdertWeekly(){
 
 function renderIdert(){
   const _iw=computeIdertWeekly();
-  const lastW=[..._iw].sort((a,b)=>b.week-a.week)[0];
+  const lastW=[..._iw].sort((a,b)=>b.wkey-a.wkey)[0];
   const totI=_iw.reduce((s,w)=>s+w.idert_total,0);
   const avgP=_iw.length?Math.round(_iw.reduce((s,w)=>s+(w.perf_idert||0),0)/_iw.length):0;
 
-  // Pro-rata target for current week
-  const wd=new Date().getDay(); // 0=Sun,1=Mon..6=Sat
-  const workdaysDone=wd===0||wd===6?5:wd;
-  const proRata=lastW?Math.round((lastW.idert_target/5)*workdaysDone):0;
+  // Pro-rata target: IDE RT draait 7 dagen per week. Vergelijk met het target
+  // voor het aantal dagen dat al ingevuld is (meestal t/m gisteren).
+  const isCurWk=lastW&&lastW.wkey===wkKey(today());
+  const workdaysDone=lastW?Math.min(lastW.days,7):0;
+  const proRata=lastW?Math.round((lastW.idert_target/7)*workdaysDone):0;
   const curWkActual=lastW?lastW.idert_total:0;
   const curWkVs=curWkActual-proRata;
+  // Gemiddelde weekproductie: volle (afgesloten) weken van het lopende jaar
+  const _curKey=wkKey(today()), _curYr=isoYear(today());
+  const fullW=_iw.filter(w=>w.wkey<_curKey&&w.yr===_curYr);
+  const avgWk=fullW.length?Math.round(fullW.reduce((s,w)=>s+(w.idert_total||0),0)/fullW.length):0;
+  const avgTgt=fullW.length?Math.round(fullW.reduce((s,w)=>s+(w.idert_target||0),0)/fullW.length):0;
+  const avgVs=avgWk-avgTgt;
 
   $('idert-metrics').innerHTML=`
     <div class="metric" style="border-top:3px solid var(--idert);">
@@ -1007,11 +1285,16 @@ function renderIdert(){
       <div class="metric-sub" style="color:var(--text3);">W14–W${lastW?lastW.week:''}</div>
     </div>
     <div class="metric" style="border-top:3px solid var(--idert);">
-      <div class="metric-label">Huidige week (W${lastW?lastW.week:''})</div>
+      <div class="metric-label">${isCurWk?'Huidige week':'Laatste week'} (W${lastW?lastW.week:''})</div>
       <div class="metric-value ${curWkVs>=0?'ok':'nok'}">${curWkActual.toLocaleString('nl-BE')}</div>
-      <div class="metric-sub ${curWkVs>=0?'ok':'nok'}">${curWkVs>=0?'▲ +':'▼ '}${Math.abs(curWkVs).toLocaleString('nl-BE')} vs pro-rata<br><span style="color:var(--text3);font-size:10px;">(${workdaysDone}/5 dagen · pro-rata target: ${proRata.toLocaleString('nl-BE')} kg)</span></div>
+      <div class="metric-sub ${curWkVs>=0?'ok':'nok'}">${curWkVs>=0?'▲ +':'▼ '}${Math.abs(curWkVs).toLocaleString('nl-BE')} vs pro-rata<br><span style="color:var(--text3);font-size:10px;">(${workdaysDone}/7 dagen · pro-rata target: ${proRata.toLocaleString('nl-BE')} kg)</span></div>
     </div>
 
+    <div class="metric" style="border-top:3px solid var(--idert);">
+      <div class="metric-label">Gem. weekproductie</div>
+      <div class="metric-value ${fullW.length?(avgVs>=0?'ok':'nok'):''}">${fullW.length?avgWk.toLocaleString('nl-BE'):'—'}</div>
+      <div class="metric-sub" style="color:var(--text3);">${fullW.length?`${fullW.length} volle weken · gem. target ${avgTgt.toLocaleString('nl-BE')} kg`:'nog geen volle week'}</div>
+    </div>
     <div class="metric" style="border-top:3px solid var(--idert);">
       <div class="metric-label">Min. dagtarget</div>
       <div class="metric-value">9.900</div>
@@ -1019,7 +1302,7 @@ function renderIdert(){
     </div>`;
 
   if(idertChart)idertChart.destroy();
-  const weeks=getWeeks(idertRange.days).sort((a,b)=>a.week-b.week);
+  const weeks=getWeeks(idertRange.days).sort((a,b)=>a.wkey-b.wkey);
   if(idertView==='weekly'){
     idertChart=new Chart($('idertChart').getContext('2d'),{type:'bar',data:{labels:weeks.map(w=>'W'+w.week),datasets:[{label:'IDE RT verwerkt (kg)',data:weeks.map(w=>w.idert_total),backgroundColor:'#5BA85B',borderRadius:4},{label:'Target (kg)',data:weeks.map(w=>w.idert_target),type:'line',borderColor:'#D85A30',borderDash:[5,5],borderWidth:2,pointRadius:4,backgroundColor:'transparent',fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{font:{size:11},color:tc()}},tooltip:{mode:'index',intersect:false}},scales:{x:{ticks:{font:{size:11},color:tc()},grid:{display:false}},y:{ticks:{font:{size:10},color:tc(),callback:v=>(v/1000).toFixed(0)+'K'},grid:{color:gc()}}}}});
     $('idert-list').innerHTML=weeks.slice().reverse().map(w=>{const vs=w.idert_total-w.idert_target;return`<div class="card"><div class="card-head"><div style="flex:1;"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><span style="font-size:14px;font-weight:500;">Week ${w.week}</span><span style="font-size:12px;color:var(--text3);">${fmtDate(w.report_date)}</span><span class="badge ${w.perf_idert>=90?'badge-done':w.perf_idert>=70?'badge-lopend':'badge-open'}">Perf. ${w.perf_idert}%</span></div><div style="margin-top:8px;display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;"><div style="font-size:12px;"><span style="color:var(--text3);">IDE RT verwerkt</span><br><b class="${vs>=0?'ok':'nok'}">${w.idert_total.toLocaleString('nl-BE')}</b> kg<br><span style="font-size:11px;color:${vs>=0?'var(--ok)':'var(--nok)'}">${vs>=0?'+':''}${Math.abs(vs).toLocaleString('nl-BE')} vs target</span></div><div style="font-size:12px;"><span style="color:var(--text3);">Target</span><br><b>${w.idert_target.toLocaleString('nl-BE')}</b> kg</div><div style="font-size:12px;"><span style="color:var(--text3);">Dag gem.</span><br><b>${Math.round(w.idert_total/5).toLocaleString('nl-BE')}</b> kg</div></div></div></div></div>`;}).join('');
@@ -1179,7 +1462,7 @@ document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(o=>o.classList.remove('open'));});
 function switchTab(id,btn){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));$('tab-'+id).classList.add('active');btn.classList.add('active');}
 function exportData(){
-  const blob=new Blob([JSON.stringify({kpi:kpiData,tech:techData,ops:opsData,acties:actiesData,veiligheid:veiligheidData,idert_extra:load('db_idert_extra',[])},null,2)],{type:'application/json'});
+  const blob=new Blob([JSON.stringify(getPayload(),null,2)],{type:'application/json'});   // volledige backup, ook per lijn/machine en planning
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
   a.download='dagoverleg_export_'+today()+'.json';a.click();
 }
@@ -1190,7 +1473,7 @@ function exportExcel(){
   const fmtD=s=>{if(!s)return'';try{const d=new Date(s+'T00:00');return d.toLocaleDateString('nl-BE',{day:'2-digit',month:'2-digit',year:'numeric'});}catch(e){return s;}};
 
   // ── KPI P1 ──────────────────────────────────────────────────────────────
-  const kpiHeaders=['Datum','Week','Afdeling','Output (kg)','Plan (kg)','H/ton','Manuren','Kg/mh','€/kg','Opmerking'];
+  const kpiHeaders=['Datum','Week','Afdeling','Output (kg)','Plan (kg)','H/ton','Manuren','Kg/mh','€/kg','Opmerking','Indirecte uren'];
   ['P1','P4','Converting'].forEach(afd=>{
     const rows=[kpiHeaders];
     const recs=[...kpiData].filter(r=>r.afd===afd).sort((a,b)=>a.datum.localeCompare(b.datum));
@@ -1198,7 +1481,7 @@ function exportExcel(){
     const dedup={};
     recs.forEach(r=>{if(!dedup[r.datum]||r.id>dedup[r.datum].id)dedup[r.datum]=r;});
     Object.values(dedup).forEach(r=>{
-      rows.push([fmtD(r.datum),r.week||'',r.afd,r.output||'',r.plan||'',r.hton||'',r.uren||'',r.kgmh||'',r.ekg||'',r.opmerking||'']);
+      rows.push([fmtD(r.datum),r.week||'',r.afd,r.output||'',r.plan||'',r.hton||'',r.uren||'',r.kgmh||'',r.ekg||'',r.opmerking||'',r.uren_ind??'']);
     });
     const ws=XLSX.utils.aoa_to_sheet(rows);
     ws['!cols']=[{wch:13},{wch:6},{wch:12},{wch:12},{wch:12},{wch:8},{wch:9},{wch:8},{wch:8},{wch:35}];
@@ -1251,14 +1534,14 @@ function exportExcel(){
   XLSX.utils.book_append_sheet(wb,wsIdert,'IDE RT');
 
   // ── Weekoverzicht ────────────────────────────────────────────────────────
-  const wkRows=[['Week','P1 Output','P1 Plan','P1 H/ton','P4 Output','P4 Plan','P4 H/ton','Conv Output','Conv Plan','Conv H/ton','IDE RT']];
+  const wkRows=[['Jaar','Week','P1 Output','P1 Plan','P1 H/ton','P4 Output','P4 Plan','P4 H/ton','Conv Output','Conv Plan','Conv H/ton','IDE RT']];
   const idertMap={};
-  computeIdertWeekly().forEach(w=>{idertMap[w.week]=w.idert_total||0;});
+  computeIdertWeekly().forEach(w=>{idertMap[w.wkey]=w.idert_total||0;});
   computeWeeklySummary().forEach(w=>{
-    wkRows.push([w.week,w.p1_out||0,w.p1_plan||'',w.p1_hton||'',w.p4_out||0,w.p4_plan||'',w.p4_hton||'',w.cv_out||0,w.cv_plan||'',w.cv_hton||'',idertMap[w.week]||'']);
+    wkRows.push([w.yr,w.week,w.p1_out||0,w.p1_plan||'',w.p1_hton||'',w.p4_out||0,w.p4_plan||'',w.p4_hton||'',w.cv_out||0,w.cv_plan||'',w.cv_hton||'',idertMap[w.wkey]||'']);
   });
   const wsWk=XLSX.utils.aoa_to_sheet(wkRows);
-  wsWk['!cols']=[{wch:6},{wch:12},{wch:12},{wch:9},{wch:12},{wch:12},{wch:9},{wch:13},{wch:13},{wch:9},{wch:12}];
+  wsWk['!cols']=[{wch:6},{wch:6},{wch:12},{wch:12},{wch:9},{wch:12},{wch:12},{wch:9},{wch:13},{wch:13},{wch:9},{wch:12}];
   XLSX.utils.book_append_sheet(wb,wsWk,'Weekoverzicht');
 
   // ── Download ─────────────────────────────────────────────────────────────
@@ -1279,6 +1562,8 @@ function importData(input){
       if(data.acties&&Array.isArray(data.acties)){actiesData=data.acties;saveAndSync('db_act11',actiesData);imported++;}
       if(data.veiligheid&&Array.isArray(data.veiligheid)){veiligheidData=data.veiligheid;saveAndSync('db_veil11',veiligheidData);imported++;}
       if(data.idert_extra&&Array.isArray(data.idert_extra)){saveAndSync('db_idert_extra',data.idert_extra);imported++;}
+      [['plan_jet','db_plan_jet'],['cv_mach','db_cv_mach'],['ext_lijn','db_ext_lijn']].forEach(([k,db])=>{
+        if(data[k]&&typeof data[k]==='object'&&!Array.isArray(data[k])){saveAndSync(db,data[k]);imported++;}});
       if(data.nextId&&data.nextId>nextId){nextId=data.nextId;saveAndSync('db_nid11',nextId);}
       if(imported>0){
         alert('✅ Data succesvol geïmporteerd! ('+imported+' tabellen bijgewerkt)');
@@ -1321,6 +1606,9 @@ function getPayload(){
     kpi:kpiData, tech:techData, ops:opsData,
     acties:actiesData, veiligheid:veiligheidData,
     idert_extra:load('db_idert_extra',[]),
+    plan_jet:load('db_plan_jet',{}),
+    cv_mach:load('db_cv_mach',{}),
+    ext_lijn:load('db_ext_lijn',{}),
     nextId:nextId, _updated:new Date().toISOString()
   };
 }
@@ -1356,6 +1644,9 @@ function applyPayload(data){
   if(data.acties&&Array.isArray(data.acties)){actiesData=data.acties;_origSave('db_act11',actiesData);}
   if(data.veiligheid&&Array.isArray(data.veiligheid)){veiligheidData=data.veiligheid;_origSave('db_veil11',veiligheidData);}
   if(data.idert_extra&&Array.isArray(data.idert_extra)){_origSave('db_idert_extra',data.idert_extra);}
+  if(data.plan_jet&&typeof data.plan_jet==='object'){_origSave('db_plan_jet',data.plan_jet);}
+  if(data.cv_mach&&typeof data.cv_mach==='object'){_origSave('db_cv_mach',data.cv_mach);}
+  if(data.ext_lijn&&typeof data.ext_lijn==='object'){_origSave('db_ext_lijn',data.ext_lijn);}
   if(data.nextId&&data.nextId>nextId){nextId=data.nextId;_origSave('db_nid11',nextId);}
   isApplying=false;
 }
@@ -1474,6 +1765,492 @@ function saveAndSync(key,val){
   clearTimeout(_syncTimers[key]);
   _syncTimers[key]=setTimeout(()=>syncToCloud(),1500);
 }
+// ── JET-rapporten inlezen (PDF) ─────────────────────────────────────────────
+const JET_DATE_RE=/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+function jetNum(s){
+  if(s==null)return null; s=String(s).trim();
+  if(s===''||s==='-')return null;
+  s=s.replace(/\./g,'').replace(',','.');
+  const v=Number(s); return isNaN(v)?null:v;
+}
+function jetIsNum(s){return /^-?[\d.]+(,\d+)?$/.test(String(s).trim());}
+function jetDate(s){const m=String(s).trim().match(JET_DATE_RE);return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:null;}
+function jetLines(items){
+  const rows=[];
+  items.forEach(it=>{const s=it.str.trim();if(!s)return;
+    let r=rows.find(r=>Math.abs(r.y-it.y)<2.5);
+    if(!r){r={y:it.y,its:[]};rows.push(r);} r.its.push({x:it.x,s});});
+  rows.sort((a,b)=>b.y-a.y);
+  return rows.map(r=>r.its.sort((a,b)=>a.x-b.x).map(i=>i.s));
+}
+// Eerste tabel (KG-blok) -> {datum:{kolom:waarde}}
+function jetTable(lines,cols,label='KG'){
+  const h=lines.findIndex(l=>l[0]===label);
+  if(h<0)throw new Error(label+'-tabel niet gevonden');
+  const head=lines[h], idx={};
+  cols.forEach(c=>{const i=typeof c==='number'?c:head.indexOf(c);if(i<0||i>=head.length)throw new Error('Kolom "'+c+'" niet gevonden');idx[c]=i;});
+  const out={};
+  for(let k=h+1;k<lines.length;k++){
+    const l=lines[k], d=jetDate(l[0]); if(!d)break;
+    if(l.length!==head.length)throw new Error('Rij '+l[0]+' heeft '+(l.length-1)+' waarden i.p.v. '+(head.length-1));
+    out[d]={}; cols.forEach(c=>out[d][c]=jetNum(l[idx[c]]));
+  }
+  if(!Object.keys(out).length)throw new Error('Geen dagrijen gevonden');
+  return out;
+}
+// Reeks grafieklabels na een titel, zonder de y-as; groepen van 7 dagen
+function jetChart(strs,startLabel){
+  let i=strs.indexOf(startLabel); if(i<0)throw new Error('Grafiek "'+startLabel+'" niet gevonden');
+  i++; if(strs[i]==='TARGET')i++;
+  const nums=[]; while(i<strs.length&&!jetDate(strs[i])){ if(jetIsNum(strs[i]))nums.push(jetNum(strs[i])); i++; }
+  const dates=[]; while(i<strs.length&&jetDate(strs[i])){dates.push(jetDate(strs[i]));i++;}
+  // y-as eraf: staart 0, s, 2s, 3s ...
+  for(let k=nums.length-3;k>=0;k--){
+    if(nums[k]!==0)continue; const st=nums[k+1]; if(!(st>0))continue;
+    let ok=true; for(let j=k+1;j<nums.length;j++) if(nums[j]!==st*(j-k)){ok=false;break;}
+    if(ok){nums.length=k;break;}
+  }
+  const n=dates.length;
+  if(n!==7||nums.length%n!==0||nums.length<2*n)throw new Error('Grafiek "'+startLabel+'": onverwacht aantal labels ('+nums.length+')');
+  const groups=[]; for(let g=0;g<nums.length/n;g++)groups.push(nums.slice(g*n,(g+1)*n));
+  const tot=groups[groups.length-1];
+  dates.forEach((d,j)=>{const s=groups.slice(0,-1).reduce((a,g)=>a+g[j],0);
+    if(Math.abs(s-tot[j])>1)throw new Error('Grafiek "'+startLabel+'": som klopt niet op '+d);});
+  return {dates,groups,tot};
+}
+function jetAfter(strs,label){const i=strs.indexOf(label);return i>=0?jetNum(strs[i+1]):null;}
+
+// Machines Converting, in de volgorde van de JET-rapporten
+const CV_MACH=[['CUIR','1.6 Cuir'],['KIRBY','2.1 Kirby'],['CAUHE','2.2 Cauhe'],['LIJIMA','2.4 Lijima'],['IBERICA','2.5 Iberica'],
+  ['BSP','2.7 BSP'],['TRIMMER','2.8 Trimmer'],['LAS_M','3.1 Las manueel'],['LAS_A','3.1 Las automatisch'],['KRIMPF','4.1 Krimpf.']];
+const CV_CODES=['1.6','2.1','2.2','2.4','2.5','2.7','2.8','3.1','3.1','4.1'];
+const CV_MU=[...CV_MACH,['ALG','Algemeen']];
+const P1_LIJN=['11','12','14','15','16','17','18'].map(n=>['L'+n,'Lijn '+n]);
+const P4_LIJN=['41','42'].map(n=>['L'+n,'Lijn '+n]);
+// Eenheden per afdeling: machines (Converting) of lijnen (P1/P4)
+const UNITS={
+  CV:{afd:'Converting',store:'db_cv_mach',el:'cv-mach',noun:'machine',list:CV_MU},
+  P1:{afd:'P1',store:'db_ext_lijn',el:'p1-lines',noun:'lijn',list:P1_LIJN},
+  P4:{afd:'P4',store:'db_ext_lijn',el:'p4-lines',noun:'lijn',list:P4_LIJN}};
+const unitKeyOf=afd=>afd==='Converting'?'CV':afd;
+
+function jetCheckMachHead(head,start){
+  CV_CODES.forEach((c,i)=>{const h=head[start+i]||'';
+    if(!h.startsWith(c))throw new Error('Machinekolommen Converting zijn gewijzigd (verwacht '+c+', gevonden "'+h+'")');});
+}
+// Planning: kolommen koppelen op rechterrand (getallen zijn rechts uitgelijnd)
+function jetIsoDate(week,dag,refIso){
+  const ref=new Date(refIso+'T00:00'); let best=null;
+  [-1,0,1].forEach(dy=>{
+    const y=ref.getFullYear()+dy, jan4=new Date(y,0,4);
+    const mon=new Date(jan4); mon.setDate(jan4.getDate()-((jan4.getDay()||7)-1)+(week-1)*7+(dag-1));
+    if(!best||Math.abs(mon-ref)<Math.abs(best-ref))best=mon;
+  });
+  return localISO(best);
+}
+function jetPlanTable(items,refIso,cols){
+  const rows=[];
+  items.forEach(it=>{const s=it.str.trim();if(!s)return;
+    let r=rows.find(r=>Math.abs(r.y-it.y)<2.5);
+    if(!r){r={y:it.y,its:[]};rows.push(r);} r.its.push({s,x:it.x,re:it.x+(it.w||0)});});
+  rows.sort((a,b)=>b.y-a.y); rows.forEach(r=>r.its.sort((a,b)=>a.x-b.x));
+  const h=rows.findIndex(r=>r.its[0]&&r.its[0].s==='WEEK'&&r.its[1]&&r.its[1].s==='DAG');
+  if(h<0)throw new Error('Planningstabel (WEEK/DAG) niet gevonden');
+  const head=rows[h].its, ci={};
+  cols.forEach(c=>{const k=typeof c==='number'?c:head.findIndex(x=>x.s===c);if(k<0||k>=head.length)throw new Error('Kolom "'+c+'" niet gevonden');ci[c]=head[k].re;});
+  if(cols.some(c=>typeof c==='number'))jetCheckMachHead(head.map(x=>x.s),2);
+  // elke waarde hoort bij de kolom met de dichtstbijzijnde rechterrand
+  const heads=Object.values(ci);
+  const val=(r,c)=>{const it=r.its.slice(2).find(x=>{const dc=Math.abs(x.re-ci[c]);return dc<30&&heads.every(h=>Math.abs(x.re-h)>=dc);});return it?jetNum(it.s):null;};
+  const days={}, sums={}; cols.forEach(c=>sums[c]=0);
+  let k=h+1;
+  for(;k<rows.length;k++){
+    const r=rows[k], w=+r.its[0].s, d=+(r.its[1]||{}).s;
+    if(!(w>=1&&w<=53)||!(d>=1&&d<=7))break;
+    const iso=jetIsoDate(w,d,refIso); days[iso]={};
+    cols.forEach(c=>{const v=val(r,c);days[iso][c]=v==null?0:v;sums[c]+=v||0;});
+  }
+  if(!Object.keys(days).length)throw new Error('Geen planningsrijen gevonden');
+  const tot=rows[k];
+  if(tot&&tot.its[0].s==='TOTAAL') cols.forEach(c=>{const t=val(tot,c);
+    if(t!=null&&Math.abs(t-sums[c])>5)throw new Error('Planning: som van de dagen klopt niet met het weektotaal ('+c+')');});
+  return days;
+}
+
+function jetParse(items){
+  const strs=items.map(i=>i.str.trim()).filter(Boolean);
+  const all=strs.join(' ');
+  if(all.includes('WEEKPLANNING')){
+    const dIdx=strs.findIndex(s=>s==='DATUM');
+    const ref=dIdx>=0?strs.slice(dIdx+1,dIdx+4).map(jetDate).find(Boolean):null;
+    if(!ref)throw new Error('Datum van de planning niet gevonden');
+    if(all.includes('TOTAAL P1')||all.includes('TOTAAL P4')){
+      const LN=[...P1_LIJN,...P4_LIJN].map(([k])=>k), col=k=>(k<'L40'?'P1LIJN':'P4LIJN')+k.slice(1);
+      const t=jetPlanTable(items,ref,['TOTAAL P1','TOTAAL P4',...LN.map(col)]), days={};
+      Object.entries(t).forEach(([d,v])=>{
+        const lijn={}; LN.forEach(k=>{if(v[col(k)])lijn[k]=v[col(k)];});
+        [['TOTAAL P1',P1_LIJN],['TOTAAL P4',P4_LIJN]].forEach(([c,L])=>{const sm=L.reduce((x,[k])=>x+(lijn[k]||0),0);
+          if(Math.abs(sm-(v[c]||0))>3)throw new Error('Planning Extrusie '+jetFmtD(d)+': som per lijn ('+sm+') ≠ '+c+' ('+v[c]+')');});
+        days[d]={P1:v['TOTAAL P1'],P4:v['TOTAAL P4'],lijn};
+      });
+      return {type:'plan_ext',label:'Planning Extrusie',rapport:ref,days,plan:true};
+    }
+    if(all.includes('TOTAAL STANS')){
+      const mi=CV_MACH.map((m,i)=>2+i);
+      const t=jetPlanTable(items,ref,['TOTAAL STANS','EINDPROD',...mi]), days={};
+      Object.entries(t).forEach(([d,v])=>{const mach={};CV_MACH.forEach(([k],i)=>{if(v[2+i])mach[k]=v[2+i];});
+        const sm=Object.values(mach).reduce((a,b)=>a+b,0);
+        if(Math.abs(sm-(v['TOTAAL STANS']||0))>3)throw new Error('Planning Converting '+jetFmtD(d)+': som per machine ('+sm+') ≠ TOTAAL STANS ('+v['TOTAAL STANS']+')');
+        days[d]={eind:v['EINDPROD'],totaal:v['TOTAAL STANS'],mach};});
+      return {type:'plan_conv',label:'Planning Converting',rapport:ref,days,plan:true};
+    }
+    throw new Error('Onbekend planningsrapport');
+  }
+  const rdIdx=strs.findIndex(s=>s==='Rapportdatum'||s==='Report Date');
+  const rapport=rdIdx>=0?jetDate(strs[rdIdx+1]):null;
+  if(!rapport)throw new Error('Rapportdatum niet gevonden');
+  if(all.includes('MUNCHY PRODUCTION')){
+    const prod=jetChart(strs,'MUNCHY PRODUCTION');
+    const wk=jetAfter(strs,'Total this week');
+    const sumP=prod.tot.reduce((a,b)=>a+b,0);
+    if(wk!=null&&Math.abs(wk-sumP)>2)throw new Error('Munchy: dagtotalen ('+sumP+') ≠ weektotaal ('+wk+')');
+    const scr=jetChart(strs,'SCRAP PROCESSED (KG)');
+    const wks=jetAfter(strs,'TOTAL SCRAP this week - REAL');
+    const sumS=scr.tot.reduce((a,b)=>a+b,0);
+    if(wks!=null&&Math.abs(wks-sumS)>2)throw new Error('Munchy scrap: dagtotalen ('+sumS+') ≠ weektotaal ('+wks+')');
+    if(scr.groups.length<4)throw new Error('Munchy scrap: te weinig reeksen');
+    const target=jetAfter(strs,'MIN. TARGET MUNCHY')||9900;
+    const days={};
+    prod.dates.forEach((d,j)=>{
+      const g=scr.groups, last=g.length-1;
+      const p1=g[0][j],p4=g[1][j],cv=g[2][j],other=g.slice(3,last).reduce((a,x)=>a+x[j],0);
+      days[d]={idert:prod.tot[j],idert_target:target,scrap_p1:p1,scrap_p4:p4,scrap_cv:cv,scrap_other:other,scrap_tot:scr.tot[j]};
+    });
+    return {type:'munchy',label:'Munchy (IDE RT)',rapport,days};
+  }
+  const lines=jetLines(items);
+  if(all.includes('P1LIJN11')||all.includes('P4LIJN41')){
+    const t=jetTable(lines,['P1','SCRAP P1','P4','SCRAP P4']);
+    const LN=[...P1_LIJN,...P4_LIJN].map(([k])=>k), col=k=>(k<'L40'?'P1LIJN':'P4LIJN')+k.slice(1);
+    const kg=jetTable(lines,LN.map(col),'KG');
+    const stH=lines.some(l=>l[0]==='STUKS'), palH=lines.some(l=>l[0]==='PALLETTEN');
+    const st=stH?jetTable(lines,LN.map(col),'STUKS'):{}, pal=palH?jetTable(lines,LN.map(col),'PALLETTEN'):{};
+    const days={}; Object.entries(t).forEach(([d,v])=>{
+      const lijn={};
+      LN.forEach(k=>{const o={kg:kg[d][col(k)],st:st[d]?st[d][col(k)]:null,pal:pal[d]?pal[d][col(k)]:null};
+        if(o.kg!=null||o.st!=null||o.pal!=null)lijn[k]=o;});
+      [['P1',P1_LIJN],['P4',P4_LIJN]].forEach(([a,L])=>{const sm=L.reduce((x,[k])=>x+((lijn[k]||{}).kg||0),0);
+        if(Math.abs(sm-(v[a]||0))>3)throw new Error('Extrusie '+jetFmtD(d)+': som per lijn '+a+' ('+sm+') ≠ totaal ('+v[a]+')');});
+      days[d]={P1:v['P1'],P4:v['P4'],scrapP1:v['SCRAP P1'],scrapP4:v['SCRAP P4'],lijn};
+    });
+    return {type:'extrusie',label:'Extrusie (P1/P4)',rapport,days};
+  }
+  if(all.includes('KRIMPF')||all.includes('IBERICA')){
+    const t=jetTable(lines,['TOTAAL','EINDPROD']);
+    const kgH=lines.find(l=>l[0]==='KG'), stH=lines.find(l=>l[0]==='STUKS'), palH=lines.find(l=>l[0]==='PALLETTEN');
+    const mi=CV_MACH.map((m,i)=>1+i);
+    jetCheckMachHead(kgH,1);
+    const kg=jetTable(lines,mi,'KG');
+    let st={},pal={};
+    if(stH){jetCheckMachHead(stH,1);st=jetTable(lines,mi,'STUKS');}
+    if(palH){jetCheckMachHead(palH,1);pal=jetTable(lines,mi,'PALLETTEN');}
+    const days={}; Object.entries(t).forEach(([d,v])=>{
+      const mach={};
+      CV_MACH.forEach(([k],i)=>{const o={kg:kg[d][1+i],st:st[d]?st[d][1+i]:null,pal:pal[d]?pal[d][1+i]:null};
+        if(o.kg!=null||o.st!=null||o.pal!=null)mach[k]=o;});
+      const sm=Object.values(mach).reduce((a,o)=>a+(o.kg||0),0);
+      if(Math.abs(sm-(v['TOTAAL']||0))>3)throw new Error('Converting '+jetFmtD(d)+': som per machine ('+sm+') ≠ TOTAAL ('+v['TOTAAL']+')');
+      days[d]={eind:v['EINDPROD'],totaal:v['TOTAAL'],mach};
+    });
+    return {type:'conv',label:'Converting',rapport,days};
+  }
+  throw new Error('Onbekend rapport (geen Extrusie, Converting of Munchy)');
+}
+
+// ── Per lijn (P1/P4) en per machine (Converting) ───────────────────────────
+const unitState={CV:{date:null,mode:'dag'},P1:{date:null,mode:'dag'},P4:{date:null,mode:'dag'}};
+function unitData(key){
+  // enkel dagen met gegevens voor de eenheden van deze afdeling
+  const U=UNITS[key], keys=U.list.map(([k])=>k), st=load(U.store,{}), out={};
+  Object.entries(st).forEach(([d,r])=>{
+    const pick=o=>{if(!o)return null;const x={};keys.forEach(k=>{if(o[k]!=null)x[k]=o[k];});return Object.keys(x).length?x:null;};
+    const v={out:pick(r.out),plan:pick(r.plan),uren:pick(r.uren)};
+    if(v.out||v.plan||v.uren)out[d]=v;
+  });
+  return out;
+}
+function unitShift(key,n){
+  const S=unitState[key], ds=Object.keys(unitData(key)).sort(); if(!ds.length)return;
+  if(S.mode==='week'){const d=new Date(S.date+'T00:00');d.setDate(d.getDate()+7*n);S.date=localISO(d);}
+  else{const i=ds.indexOf(S.date);const j=i<0?ds.length-1:Math.min(ds.length-1,Math.max(0,i+n));S.date=ds[j];}
+  renderUnits(key);
+}
+function unitSetMode(key,m){unitState[key].mode=m;renderUnits(key);}
+function renderCvMachines(){renderUnits('CV');}
+function bezSummary(d){
+  const b=(load('db_ext_lijn',{})[d]||{}).bezetting; if(!b)return '';
+  const rows=PLOEGEN.filter(([k])=>(b[k]||[]).length).map(([k,n])=>`<div><span style="color:var(--text3);display:inline-block;min-width:52px;">${n}</span>${b[k].map(p=>{
+      return `<span style="margin-right:14px;">L${p.lines.map(l=>l.slice(1)).join('+')} · ${p.n} pers. · ${String(p.h).replace('.',',')} u</span>`;}).join('')}</div>`).join('');
+  return `<div style="font-size:12px;color:var(--text2);margin-top:10px;line-height:1.9;"><div class="section-label" style="margin:0 0 2px;">Bezetting</div>${rows}</div>`;
+}
+function renderUnits(key){
+  const U=UNITS[key], S=unitState[key], el=document.getElementById(U.el); if(!el)return;
+  const st=unitData(key), ds=Object.keys(st).sort();
+  const isCv=key==='CV';
+  if(!ds.length){el.innerHTML=`<div style="font-size:13px;color:var(--text3);">Nog geen gegevens per ${U.noun}. Lees de JET-rapporten in via de knop <b>JET</b> bovenaan en vul de manuren per ${U.noun} in via <b>KPI invoeren</b>.</div>`;return;}
+  if(!S.date||!st[S.date]&&S.mode==='dag'){const w=ds.filter(d=>st[d].out&&d<=today());S.date=w.length?w[w.length-1]:ds[ds.length-1];}
+  let dates,title;
+  if(S.mode==='week'){
+    const d=new Date(S.date+'T00:00'),dn=d.getDay()||7; d.setDate(d.getDate()-dn+1);
+    dates=[...Array(7)].map((_,i)=>{const x=new Date(d);x.setDate(d.getDate()+i);return localISO(x);});
+    title='Week '+isoWeek(S.date)+' <span style="color:var(--text3);font-weight:400;font-size:12px;">'+jetFmtD(dates[0])+' – '+jetFmtD(dates[6])+'</span>';
+  }else{dates=[S.date];title=new Date(S.date+'T00:00').toLocaleDateString('nl-BE',{weekday:'long',day:'numeric',month:'long'});}
+  const sum={}; U.list.forEach(([k])=>sum[k]={plan:null,kg:null,st:null,pal:null,mu:null});
+  const add=(o,f,v)=>{if(v!=null)o[f]=(o[f]||0)+v;};
+  dates.forEach(d=>{const r=st[d];if(!r)return;
+    U.list.forEach(([k])=>{
+      if(r.plan&&r.plan[k]!=null)add(sum[k],'plan',r.plan[k]);
+      const o=r.out&&r.out[k]; if(o){add(sum[k],'kg',o.kg);add(sum[k],'st',o.st);add(sum[k],'pal',o.pal);}
+      if(r.uren&&r.uren[k]!=null)add(sum[k],'mu',r.uren[k]);
+    });});
+  // indirecte uren uit de KPI-records van de afdeling
+  let ind=null;
+  dates.forEach(d=>{const rec=kpiData.filter(r=>r.afd===U.afd&&r.datum===d).sort((a,b)=>(b.id||0)-(a.id||0))[0];if(rec&&rec.uren_ind!=null)ind=(ind||0)+(+rec.uren_ind);});
+  const f=v=>v==null?'<span class="mut">—</span>':Math.round(v).toLocaleString('nl-BE');
+  const f1=v=>v==null?'<span class="mut">—</span>':(Math.round(v*100)/100).toLocaleString('nl-BE');
+  const pc=(o,p)=>{if(!p)return '<span class="mut">—</span>';const x=Math.round((o||0)/p*100);return `<span class="${x>=100?'ok':'nok'}">${x}%</span>`;};
+  const ht=(mu,kg)=>mu>0&&kg>0?(Math.round(mu/(kg/1000)*100)/100).toLocaleString('nl-BE'):'<span class="mut">—</span>';
+  const spu=(s_,mu)=>mu>0&&s_>0?Math.round(s_/mu).toLocaleString('nl-BE'):'<span class="mut">—</span>';
+  const tot={plan:null,kg:null,st:null,pal:null,mu:null}; let rows='';
+  const row=(label,m,cls='')=>`<tr${cls}><td>${label}</td><td class="r">${f(m.plan)}</td><td class="r">${f(m.kg)}</td><td class="r">${pc(m.kg,m.plan)}</td><td class="r">${f(m.st)}</td><td class="r">${f(m.pal)}</td><td class="r">${f1(m.mu)}</td><td class="r">${ht(m.mu,m.kg)}</td><td class="r">${spu(m.st,m.mu)}</td></tr>`;
+  U.list.forEach(([k,label])=>{const m=sum[k];
+    if(m.plan==null&&m.kg==null&&m.st==null&&m.mu==null)return;
+    ['plan','kg','st','pal','mu'].forEach(x=>add(tot,x,m[x])); rows+=row(label,m);});
+  const cap=S.mode==='week'?'week':'dag';
+  if(!rows)rows=`<tr><td colspan="9" class="mut">Geen gegevens voor deze ${cap}.</td></tr>`;
+  else rows+=row('Totaal direct',tot,' class="tot"');
+  const indTxt=`<div style="display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--text2);margin-top:10px;">
+      <span>Directe manuren: <b>${f1(tot.mu)}</b></span><span>Indirecte manuren: <b>${f1(ind)}</b></span>
+      <span>Totaal aanwezig: <b>${tot.mu!=null||ind!=null?f1((tot.mu||0)+(ind||0)):'—'}</b></span></div>`;
+  el.innerHTML=`<div class="cvm-bar">
+      <div class="cvm-nav"><button class="btn" onclick="unitShift('${key}',-1)" title="Vorige">‹</button><span>${title}</span><button class="btn" onclick="unitShift('${key}',1)" title="Volgende">›</button></div>
+      <div class="chart-tabs" style="margin:0;"><button class="chart-tab${S.mode==='dag'?' active':''}" onclick="unitSetMode('${key}','dag')">Dag</button><button class="chart-tab${S.mode==='week'?' active':''}" onclick="unitSetMode('${key}','week')">Week</button></div>
+    </div>
+    <div style="overflow-x:auto;"><table class="week-table cvm-tbl"><thead><tr><th>${isCv?'Machine':'Lijn'}</th><th class="r">Plan (kg)</th><th class="r">Output (kg)</th><th class="r">t.o.v. plan</th><th class="r">Stuks</th><th class="r">Paletten</th><th class="r">Manuren</th><th class="r">H/ton</th><th class="r" title="Geproduceerde stuks per gepresteerd manuur">Stuks/uur</th></tr></thead><tbody>${rows}</tbody></table></div>
+    ${indTxt}
+    ${key==='P1'&&S.mode==='dag'?bezSummary(S.date):''}
+    <div class="form-hint" style="margin-top:8px;">Productie en planning: JET-rapporten (de planning bevat geen stuks). Manuren: ingevuld per ${U.noun} via <b>KPI invoeren</b>; de h/ton van de afdeling rekent enkel met de directe uren.${isCv?' H/ton per machine is berekend op de kg van die machine; de h/ton van de afdeling blijft op de output BK’s.':''}</div>`;
+}
+
+// ── JET import: UI en verwerking ────────────────────────────────────────────
+const PDFJS_VER='3.11.174';
+let _pdfjsP=null, jetReports=[], jetChanges=[], jetNewPlans={}, jetPlanCount=0, jetMach={}, jetMachCount=0;
+function loadPdfJs(){
+  if(window.pdfjsLib)return Promise.resolve(window.pdfjsLib);
+  if(_pdfjsP)return _pdfjsP;
+  _pdfjsP=new Promise((res,rej)=>{
+    const s=document.createElement('script');
+    s.src=`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VER}/pdf.min.js`;
+    s.onload=()=>{window.pdfjsLib.GlobalWorkerOptions.workerSrc=`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS_VER}/pdf.worker.min.js`;res(window.pdfjsLib);};
+    s.onerror=()=>{_pdfjsP=null;rej(new Error('PDF-lezer kon niet geladen worden (geen internet?)'));};
+    document.head.appendChild(s);
+  });
+  return _pdfjsP;
+}
+async function jetReadFile(file){
+  const lib=await loadPdfJs();
+  const doc=await lib.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
+  let items=[];
+  for(let p=1;p<=doc.numPages;p++){
+    const tc=await (await doc.getPage(p)).getTextContent();
+    items=items.concat(tc.items.map(i=>({str:i.str,x:i.transform[4],w:i.width||0,y:i.transform[5]-p*10000})));
+  }
+  return jetParse(items);
+}
+function openJetImport(){
+  jetReports=[];jetChanges=[];
+  $('jet-files').innerHTML='';$('jet-preview').innerHTML='';
+  $('jet-apply').disabled=true;$('jet-file-input').value='';
+  $('modal-jet').classList.add('open');
+}
+async function jetHandleFiles(fileList){
+  const files=[...fileList].filter(f=>/\.pdf$/i.test(f.name));
+  if(!files.length)return;
+  $('jet-preview').innerHTML='<div style="color:var(--text3);font-size:12px;">Bezig met inlezen…</div>';
+  for(const f of files){
+    try{
+      const r=await jetReadFile(f); r.file=f.name;
+      jetReports=jetReports.filter(x=>x.type!==r.type); // nieuwste bestand per soort
+      jetReports.push(r);
+    }catch(e){
+      jetReports=jetReports.filter(x=>x.file!==f.name);
+      jetReports.push({type:'err',file:f.name,error:e.message});
+    }
+  }
+  jetBuildPreview();
+}
+function jetExistingIdert(datum){
+  const extra=load('db_idert_extra',[]).filter(r=>r.datum===datum);
+  const seed=iDailyData.filter(r=>r.datum===datum);
+  return [...seed,...extra].sort((a,b)=>(b.id||0)-(a.id||0))[0]||null;
+}
+function jetExistingKpi(afd,datum){
+  return kpiData.filter(r=>r.afd===afd&&r.datum===datum).sort((a,b)=>(b.id||0)-(a.id||0))[0]||null;
+}
+const jetCur=(ex,k)=>{if(!ex)return null;const v=ex[k];return v===''||v==null?null:Number(v);};
+const jetFmt=v=>v==null||v===''?'—':Number(v).toLocaleString('nl-BE');
+const jetFmtD=d=>{const[y,m,dd]=d.split('-');return `${+dd}/${+m}`;};
+function jetBuildPreview(){
+  const ok=jetReports.filter(r=>r.type!=='err');
+  $('jet-files').innerHTML=jetReports.map(r=>r.type==='err'
+    ?`<div class="jet-file err"><i class="ti ti-alert-triangle"></i> <b>${r.file}</b>: ${r.error}</div>`
+    :`<div class="jet-file ok"><i class="ti ti-circle-check"></i> <b>${r.label}</b> · ${r.plan?(()=>{const ds=Object.keys(r.days).filter(d=>d>r.rapport);return ds.length?'week '+isoWeek(ds[0])+', geldt voor '+jetFmtD(ds[0])+' – '+jetFmtD(ds[ds.length-1]):'aangemaakt '+jetFmtD(r.rapport)+': geen toekomstige dagen meer';})():'rapport van '+jetFmtD(r.rapport)}</div>`).join('');
+  jetChanges=[]; const warns=[];
+  const byType=t=>ok.find(r=>r.type===t);
+  const ext=byType('extrusie'),conv=byType('conv'),mun=byType('munchy');
+  // Planning: uit dit import of eerder opgeslagen
+  const pExt=byType('plan_ext'), pConv=byType('plan_conv');
+  jetNewPlans={};
+  // Een planning geldt pas vanaf de dag na de aanmaakdatum: het plan van een dag is
+  // de planning zoals die de avond ervoor bekend was. Latere versies wijzigen voorbije dagen niet.
+  if(pExt)Object.entries(pExt.days).forEach(([d,v])=>{if(d<=pExt.rapport)return;jetNewPlans['P1|'+d]={plan:v.P1};jetNewPlans['P4|'+d]={plan:v.P4};});
+  if(pConv)Object.entries(pConv.days).forEach(([d,v])=>{if(d<=pConv.rapport)return;jetNewPlans['Converting|'+d]={plan:v.eind,plan_totaal:v.totaal};});
+  const stored=load('db_plan_jet',{});
+  const planVals=(afd,d,ex)=>{
+    const n=jetNewPlans[afd+'|'+d]; if(n)return n;               // nieuwe planning wint
+    const st=stored[afd+'|'+d]; if(!st)return {};
+    const o={}; Object.keys(st).forEach(k=>{if(jetCur(ex,k)==null&&st[k]!=null)o[k]=st[k];}); // enkel lege plan aanvullen
+    return o;
+  };
+  const past=(r,d)=>d<r.rapport; // rij van de rapportdag zelf is nog onvolledig
+  const kpiChange=(afd,datum,vals)=>{
+    const ex=jetExistingKpi(afd,datum);
+    vals=Object.assign({},vals,planVals(afd,datum,ex));
+    const diff=Object.keys(vals).filter(k=>jetCur(ex,k)!==vals[k]);
+    if(!ex||diff.length) jetChanges.push({kind:'kpi',afd,datum,vals,ex,diff:ex?diff:Object.keys(vals)});
+  };
+  if(ext) Object.entries(ext.days).forEach(([d,v])=>{ if(!past(ext,d))return;
+    if(v.P1!=null)kpiChange('P1',d,{output:v.P1});
+    if(v.P4!=null)kpiChange('P4',d,{output:v.P4});
+  });
+  if(conv) Object.entries(conv.days).forEach(([d,v])=>{ if(!past(conv,d))return;
+    if(v.eind==null&&v.totaal==null)return;
+    kpiChange('Converting',d,{output:v.eind??0,output_totaal:v.totaal??0});
+  });
+  if(mun) Object.entries(mun.days).forEach(([d,v])=>{ if(!past(mun,d))return;
+    const ex=jetExistingIdert(d);
+    const keys=['idert','idert_target','scrap_p1','scrap_p4','scrap_cv','scrap_other','scrap_tot'];
+    const diff=keys.filter(k=>jetCur(ex,k)!==v[k]);
+    if(!ex||diff.length) jetChanges.push({kind:'idert',afd:'IDE RT',datum:d,vals:v,ex,diff:ex?diff:keys});
+    if(ext&&ext.days[d]){
+      const e=ext.days[d];
+      if(e.scrapP1!=null&&Math.abs(e.scrapP1-v.scrap_p1)>1)warns.push(`${jetFmtD(d)}: scrap P1 is ${jetFmt(v.scrap_p1)} in Munchy en ${jetFmt(e.scrapP1)} in Extrusie`);
+      if(e.scrapP4!=null&&Math.abs(e.scrapP4-v.scrap_p4)>1)warns.push(`${jetFmtD(d)}: scrap P4 is ${jetFmt(v.scrap_p4)} in Munchy en ${jetFmt(e.scrapP4)} in Extrusie`);
+    }
+  });
+  Object.entries(jetNewPlans).forEach(([key,v])=>{
+    const [afd,d]=key.split('|');
+    if(jetChanges.some(c=>c.kind==='kpi'&&c.afd===afd&&c.datum===d))return;
+    const ex=jetExistingKpi(afd,d); if(!ex)return;   // geen dag op het bord: planning wordt bewaard
+    const diff=Object.keys(v).filter(k=>jetCur(ex,k)!==v[k]);
+    if(diff.length)jetChanges.push({kind:'kpi',afd,datum:d,vals:v,ex,diff});
+  });
+  jetChanges.sort((a,b)=>a.datum<b.datum?-1:a.datum>b.datum?1:0);
+  const labels={plan:'Plan',plan_totaal:'Plan totaal',output:'Output',output_totaal:'Output totaal',idert:'IDE RT',idert_target:'Dagtarget',scrap_p1:'Scrap P1',scrap_p4:'Scrap P4',scrap_cv:'Scrap Conv',scrap_other:'Scrap overig',scrap_tot:'Scrap totaal'};
+  if(!ok.length){$('jet-preview').innerHTML='';$('jet-apply').disabled=true;return;}
+  let html='';
+  if(warns.length)html+=`<div class="jet-warn"><i class="ti ti-alert-triangle"></i> ${warns.join('<br>')}</div>`;
+  // Per machine (Converting) en per lijn (Extrusie)
+  jetMach={db_cv_mach:{out:{},plan:{}},db_ext_lijn:{out:{},plan:{}}};
+  const fillU=(rep,store,fld,kind,cmp)=>{if(rep)Object.entries(rep.days).forEach(([d,v])=>{if(!cmp(d,rep.rapport))return;const x=v[fld]||{};if(kind==='out'&&!Object.keys(x).length)return;jetMach[store][kind][d]=x;});};
+  fillU(conv,'db_cv_mach','mach','out',(d,r)=>d<r); fillU(pConv,'db_cv_mach','mach','plan',(d,r)=>d>r);
+  fillU(ext,'db_ext_lijn','lijn','out',(d,r)=>d<r); fillU(pExt,'db_ext_lijn','lijn','plan',(d,r)=>d>r);
+  const uMsg=[]; jetMachCount=0;
+  [['db_cv_mach','Converting per machine'],['db_ext_lijn','Extrusie per lijn']].forEach(([store,lbl])=>{
+    const stU=load(store,{}), u=jetMach[store];
+    const o=Object.keys(u.out).filter(d=>JSON.stringify((stU[d]||{}).out||null)!==JSON.stringify(u.out[d])).length;
+    const pl=Object.keys(u.plan).filter(d=>JSON.stringify((stU[d]||{}).plan||null)!==JSON.stringify(u.plan[d])).length;
+    jetMachCount+=o+pl;
+    if(o||pl)uMsg.push(lbl+': '+[o?'output van '+o+' dag'+(o===1?'':'en'):'',pl?'planning van '+pl+' dag'+(pl===1?'':'en'):''].filter(Boolean).join(' en '));
+  });
+  const nPlan=Object.keys(jetNewPlans).filter(k=>JSON.stringify(stored[k])!==JSON.stringify(jetNewPlans[k])).length;
+  if(nPlan){const wks=[...new Set(Object.keys(jetNewPlans).map(k=>isoWeek(k.split('|')[1])))].sort((a,b)=>a-b).join(', ');
+    html+=`<div class="form-hint" style="margin-bottom:8px;"><i class="ti ti-calendar"></i> De planning van week ${wks} wordt bewaard en automatisch ingevuld zodra die dagen op het bord komen.</div>`;}
+  uMsg.forEach(m=>{html+=`<div class="form-hint" style="margin-bottom:6px;"><i class="ti ti-building-factory-2"></i> ${m} bijgewerkt.</div>`;});
+  if(!jetChanges.length&&!nPlan&&!jetMachCount){
+    html+='<div style="font-size:13px;color:var(--text2);padding:8px 0;">Alles staat al correct op het bord. Er is niets in te lezen.</div>';
+  }else{
+    html+='<div style="overflow-x:auto;"><table class="jet-tbl"><thead><tr><th>Datum</th><th>Afdeling</th><th>Veld</th><th class="r">Nu op bord</th><th class="r">Uit rapport</th></tr></thead><tbody>';
+    jetChanges.forEach(c=>{
+      const fields=c.kind==='idert'&&!c.ex?['idert','scrap_tot']:c.kind==='kpi'&&!c.ex?c.diff.filter(k=>k!=='plan_totaal'&&k!=='output_totaal'||c.vals[k]):c.diff;
+      fields.forEach((k,i)=>{
+        html+=`<tr${i===0?' class="first"':''}><td>${i===0?jetFmtD(c.datum):''}</td><td>${i===0?c.afd+(c.ex?'':' <span class="jet-new">nieuw</span>'):''}</td><td>${labels[k]||k}</td><td class="r old">${c.ex?jetFmt(c.ex[k]):'—'}</td><td class="r new">${jetFmt(c.vals[k])}</td></tr>`;
+      });
+    });
+    html+='</tbody></table></div>';
+    html+='<div class="form-hint" style="margin-top:6px;">Manuren en opmerkingen blijven ongewijzigd. Een plan wordt alleen overschreven door een meegegeven planning; anders wordt een leeg plan aangevuld uit de bewaarde planning. Bij dagen met manuren worden h/ton en kg/mh herberekend.</div>';
+  }
+  $('jet-preview').innerHTML=html;
+  jetPlanCount=nPlan;
+  $('jet-apply').disabled=!jetChanges.length&&!nPlan&&!jetMachCount;
+  $('jet-apply').innerHTML=`<i class="ti ti-check"></i> Inlezen${jetChanges.length?' ('+jetChanges.length+')':''}`;
+}
+function jetApply(){
+  if(!jetChanges.length&&!jetPlanCount&&!jetMachCount)return;
+  if(jetMachCount)Object.entries(jetMach).forEach(([store,u])=>{
+    if(!Object.keys(u.out).length&&!Object.keys(u.plan).length)return;
+    const st=load(store,{});
+    Object.entries(u.out).forEach(([d,v])=>{st[d]=Object.assign(st[d]||{},{out:v});});
+    Object.entries(u.plan).forEach(([d,v])=>{st[d]=Object.assign(st[d]||{},{plan:v});});
+    saveAndSync(store,st);   // geen opruiming: historiek per lijn/machine blijft bewaard
+  });
+  if(Object.keys(jetNewPlans).length){
+    const st=load('db_plan_jet',{}); Object.assign(st,jetNewPlans);
+    const cut=new Date(); cut.setDate(cut.getDate()-120); const cutIso=localISO(cut);
+    Object.keys(st).forEach(k=>{if(k.split('|')[1]<cutIso)delete st[k];});
+    saveAndSync('db_plan_jet',st);
+  }
+  let extra=load('db_idert_extra',[]);
+  jetChanges.forEach(c=>{
+    if(c.kind==='kpi'){
+      const recs=kpiData.filter(r=>r.afd===c.afd&&r.datum===c.datum);
+      if(!recs.length){
+        recs.push({id:++nextId,afd:c.afd,datum:c.datum,week:isoWeek(c.datum),output:null,
+          output_totaal:c.afd==='Converting'?null:undefined,plan:null,plan_totaal:c.afd==='Converting'?null:undefined,hton:null,uren:null,kgmh:null,ekg:null,
+          afkeur:null,verantw:(AFD_CONFIG[c.afd]||{}).verantw||'',opmerking:''});
+        kpiData.push(recs[0]);
+      }
+      recs.forEach(r=>{
+        Object.assign(r,c.vals);
+        if(r.uren>0&&r.output>0){
+          r.hton=Math.round(r.uren/(r.output/1000)*100)/100;
+          r.kgmh=Math.round(r.output/r.uren*10)/10;
+          r.ekg=Math.round(46/r.kgmh*10000)/10000;
+        }else{r.hton=null;r.kgmh=null;r.ekg=null;}
+      });
+    }else{
+      const ex=c.ex;
+      extra=extra.filter(r=>r.datum!==c.datum);
+      extra.push({id:++nextId,datum:c.datum,week:isoWeek(c.datum),...c.vals,opmerking:ex&&ex.opmerking||''});
+    }
+  });
+  saveAndSync('db_kpi12',kpiData);
+  saveAndSync('db_idert_extra',extra);
+  saveAndSync('db_nid11',nextId);
+  const n=jetChanges.length;
+  $('modal-jet').classList.remove('open');
+  renderKpiOverview();renderAfd('P1');renderAfd('P4');renderAfd('CV');renderIdert();
+  alert((n?n+' dag'+(n===1?'':'en')+' bijgewerkt':'Geen dagen bijgewerkt')+(jetPlanCount?'; planning bewaard':'')+(jetMachCount?'; gegevens per lijn/machine bijgewerkt':'')+'.');
+}
+
+const _renderAfdBase=renderAfd;
+renderAfd=function(a){_renderAfdBase(a);if(UNITS[a])renderUnits(a);};
+(function(){
+  const dz=document.getElementById('jet-drop'); if(!dz)return;
+  ['dragenter','dragover'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.add('over');}));
+  ['dragleave','drop'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.remove('over');}));
+  dz.addEventListener('drop',ev=>jetHandleFiles(ev.dataTransfer.files));
+})();
 
 function openSyncConfig(){
   document.getElementById('sync-config-modal').classList.add('open');
@@ -1516,12 +2293,28 @@ function isoWeek(dateStr){
   }catch(e){return 0;}
 }
 
+function isoYear(dateStr){
+  try{
+    const d=new Date(dateStr+'T00:00');
+    const dn=d.getDay()||7;
+    d.setDate(d.getDate()+4-dn); // donderdag van die week bepaalt het ISO-jaar
+    return d.getFullYear();
+  }catch(e){return 0;}
+}
+// Unieke weeksleutel jaar*100+week, zodat week 1 van 2027 niet samenvalt met week 1 van 2026
+function wkKey(dateStr,week){return isoYear(dateStr)*100+(week||isoWeek(dateStr));}
+
 function fixWeekNumbers(){
   let changed=false;
   // Fix KPI data
   kpiData.forEach(r=>{
     const correct=isoWeek(r.datum);
     if(correct&&r.week!==correct){r.week=correct;changed=true;}
+    // H/ton en kg/mh altijd herberekenen uit manuren en output
+    if(r.uren>0&&r.output>0){
+      const ht=Math.round(r.uren/(r.output/1000)*100)/100, km=Math.round(r.output/r.uren*10)/10;
+      if(r.hton!==ht||r.kgmh!==km){r.hton=ht;r.kgmh=km;r.ekg=Math.round(46/km*10000)/10000;changed=true;}
+    }
   });
   if(changed) save('db_kpi12',kpiData);
 
@@ -1568,7 +2361,7 @@ syncFromCloud().then(ok=>{
 });
 
 // ── Auto-update check ──────────────────────────────────────────────────────
-const CURRENT_VERSION='20260602082300';
+const CURRENT_VERSION='20261112135127';
 function checkForUpdate(){
   fetch(window.location.href+'?nocache='+Date.now(),{cache:'no-store'})
     .then(r=>r.text())
